@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Gallery - SVGMS</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="imgs/logo1.png" type="image/png" />
+
+</head>
+<body>
+
+    <!-- ===== HEADER + RIBBON ===== -->
+    <div id="header-placeholder"></div>
+
+    <!-- ===== NAVIGATION ===== -->
+    <div id="nav-placeholder"></div>
+
+    <!-- ===== GALLERY CONTENT ===== -->
+    <div class="gallery-wrapper">
+        <div class="page-title">
+            <h1>🖼️ Photo Gallery</h1>
+            <p>Memorable moments from SVGMS</p>
+        </div>
+
+        <div id="galleryContainer">
+            <div class="no-images">
+                <div class="big-icon">📸</div>
+                <p>Loading events...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== LIGHTBOX ===== -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+        <span class="close">&times;</span>
+        <img id="lightboxImage" src="" alt="">
+        <div class="caption" id="lightboxCaption"></div>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <div id="footer-placeholder"></div>
+
+    <!-- ===== FIREBASE SDK ===== -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // ===== LOAD HEADER =====
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-placeholder').innerHTML = data;
+            });
+
+        // ===== LOAD NAVIGATION =====
+        fetch('nav.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('nav-placeholder').innerHTML = data;
+            });
+
+        // ===== LOAD FOOTER =====
+        fetch('footer.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('footer-placeholder').innerHTML = data;
+            });
+
+        // ===== FIREBASE CONFIG =====
+        const firebaseConfig = {
+            apiKey: "AIzaSyAHmBCyGlSo1puz1LZ7k-4twg_XAcOqyRA",
+            authDomain: "svgms-backend.firebaseapp.com",
+            projectId: "svgms-backend",
+            storageBucket: "svgms-backend.firebasestorage.app",
+            messagingSenderId: "1065359559935",
+            appId: "1:1065359559935:web:977cea73a68e05813750ca"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        // ===== SHOW PAGE FUNCTION =====
+        function showPage(pageName) {
+            // Close all menus
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                const menu = item.querySelector('.dropdown-menu');
+                if (menu) {
+                    menu.style.display = 'none';
+                }
+            });
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Redirect to index.html with hash
+            window.location.href = `index.html#${pageName}`;
+        }
+
+        // ===== TOGGLE MENU FUNCTION =====
+        function toggleMenu(event, element) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const parent = element.closest('.nav-item');
+            const menu = parent.querySelector('.dropdown-menu');
+
+            if (!menu) return;
+
+            // Close all other menus
+            document.querySelectorAll('.nav-item').forEach(nav => {
+                if (nav !== parent) {
+                    nav.classList.remove('active');
+                    const m = nav.querySelector('.dropdown-menu');
+                    if (m) {
+                        m.style.display = 'none';
+                    }
+                }
+            });
+
+            // Toggle this menu
+            if (parent.classList.contains('active')) {
+                parent.classList.remove('active');
+                menu.style.display = 'none';
+            } else {
+                parent.classList.add('active');
+                menu.style.display = 'block';
+            }
+        }
+
+        // ===== CLOSE DROPDOWN WHEN CLICKING OUTSIDE =====
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.nav-item')) {
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                    const menu = item.querySelector('.dropdown-menu');
+                    if (menu) {
+                        menu.style.display = 'none';
+                    }
+                });
+            }
+        });
+
+        // ===== LOAD GALLERY =====
+        async function loadGallery() {
+            const container = document.getElementById('galleryContainer');
+            container.innerHTML = '<div class="no-images"><div class="big-icon">📸</div><p>Loading events...</p></div>';
+
+            try {
+                const eventsSnapshot = await db.collection('events')
+                    .orderBy('date', 'desc')
+                    .get();
+
+                if (eventsSnapshot.empty) {
+                    container.innerHTML = `
+                        <div class="no-images">
+                            <div class="big-icon">🖼️</div>
+                            <p>No events yet. Check back soon!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = '';
+
+                for (const eventDoc of eventsSnapshot.docs) {
+                    const event = eventDoc.data();
+                    const eventId = eventDoc.id;
+
+                    const imagesSnapshot = await db.collection('eventImages')
+                        .where('eventId', '==', eventId)
+                        .orderBy('order', 'asc')
+                        .get();
+
+                    const images = [];
+                    imagesSnapshot.forEach(imgDoc => {
+                        images.push(imgDoc.data());
+                    });
+
+                    const eventCard = document.createElement('div');
+                    eventCard.className = 'event-card';
+                    eventCard.innerHTML = `
+                        <div class="event-header">
+                            <h2>${event.title}</h2>
+                            ${event.date ? `<p class="event-date">📅 ${new Date(event.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</p>` : ''}
+                            ${event.description ? `<p class="event-desc">${event.description}</p>` : ''}
+                        </div>
+                        <div class="event-images">
+                            ${images.length === 0 ? '<p class="no-images-text">No images for this event yet.</p>' : ''}
+                            ${images.map(img => `
+                                <div class="gallery-item" onclick="openLightbox('${img.imageUrl}', '${img.caption || event.title}')">
+                                    <img src="${img.imageUrl}" alt="${img.caption || event.title}">
+                                    ${img.caption ? `<div class="caption">${img.caption}</div>` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    container.appendChild(eventCard);
+                }
+
+            } catch (error) {
+                console.error('Error loading gallery:', error);
+                container.innerHTML = `
+                    <div class="no-images">
+                        <div class="big-icon">❌</div>
+                        <p>Error loading gallery. Please refresh.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // ===== LIGHTBOX =====
+        function openLightbox(imageUrl, caption) {
+            document.getElementById('lightboxImage').src = imageUrl;
+            document.getElementById('lightboxCaption').textContent = caption || '';
+            document.getElementById('lightbox').classList.add('active');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeLightbox();
+        });
+
+        document.addEventListener('DOMContentLoaded', loadGallery);
+    </script>
+
+</body>
+</html>

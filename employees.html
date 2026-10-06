@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Faculty - SVGMS</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="imgs/logo1.png" type="image/png" />
+
+    
+    <!-- ===== Swiper.js CSS ===== -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    
+    <!-- ===== Font Awesome ===== -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    
+    <style>
+        /* ===== EMPLOYEE GALLERY STYLES ===== */
+        :root {
+            --primary: #1a237e;
+            --primary-light: #283593;
+            --accent: #d4af37;
+            --bg-light: #f5f5f5;
+            --white: #ffffff;
+            --text-dark: #333333;
+            --text-muted: #666666;
+            --shadow: 0 2px 10px rgba(0,0,0,0.08);
+            --transition: all 0.3s ease;
+            --legacy-gold: #d4af37;
+            --legacy-warm: #fef9f0;
+            --legacy-text: #8d6e3f;
+        }
+
+        /* ===== GALLERY WRAPPER ===== */
+        .gallery-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* ===== HERO SECTION ===== */
+        .gallery-hero {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            padding: 2.5rem 2rem;
+            border-radius: 12px;
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .gallery-hero::after {
+            content: '';
+            position: absolute;
+            bottom: -40px;
+            right: -40px;
+            width: 150px;
+            height: 150px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+        }
+        .gallery-hero h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+        .gallery-hero h1 span {
+            color: var(--accent);
+        }
+        .gallery-hero p {
+            opacity: 0.8;
+            font-size: 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .gallery-hero .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem;
+            margin-top: 1.2rem;
+            flex-wrap: wrap;
+        }
+        .gallery-hero .stats-row .stat-item {
+            text-align: center;
+        }
+        .gallery-hero .stats-row .stat-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .gallery-hero .stats-row .stat-label {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        /* ===== TAB SYSTEM ===== */
+        .gallery-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 1.5rem;
+            background: var(--bg-light);
+            padding: 4px;
+            border-radius: 12px;
+        }
+        .gallery-tabs button {
+            flex: 1;
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+        .gallery-tabs button.active {
+            background: var(--white);
+            color: var(--primary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .gallery-tabs button:hover:not(.active) {
+            background: rgba(255,255,255,0.5);
+        }
+        .gallery-tabs button .badge {
+            display: inline-block;
+            padding: 0.1rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-left: 6px;
+            font-weight: 600;
+        }
+        .gallery-tabs button .badge.active-badge {
+            background: #28a745;
+            color: white;
+        }
+        .gallery-tabs button .badge.legacy-badge {
+            background: var(--legacy-gold);
+            color: white;
+        }
+
+        /* ===== TOOLBAR ===== */
+        .gallery-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+            align-items: center;
+            background: var(--white);
+            padding: 1rem 1.2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+        .gallery-toolbar input[type="text"] {
+            flex: 1;
+            min-width: 180px;
+            padding: 0.6rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            background: var(--bg-light);
+            transition: var(--transition);
+        }
+        .gallery-toolbar input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: var(--white);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+        .gallery-toolbar select {
+            padding: 0.6rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            background: var(--bg-light);
+            cursor: pointer;
+            transition: var(--transition);
+            min-width: 140px;
+        }
+        .gallery-toolbar select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        /* ===== SECTION HEADER ===== */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            padding: 0 0.3rem;
+        }
+        .section-header h3 {
+            font-size: 1.1rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .section-header .count-badge {
+            background: var(--primary);
+            color: white;
+            padding: 0.05rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .section-header .count-badge.legacy-badge {
+            background: var(--legacy-gold);
+            color: white;
+        }
+
+        /* ===== SWIPER CONTAINER ===== */
+        .swiper-container {
+            overflow: hidden;
+            padding: 0.5rem 0.3rem;
+            position: relative;
+        }
+        .swiper-wrapper {
+            display: flex;
+        }
+        .swiper-slide {
+            height: auto;
+            width: auto;
+        }
+
+        /* ===== SWIPER NAVIGATION ===== */
+        .swiper-button-next,
+        .swiper-button-prev {
+            color: var(--primary);
+            background: var(--white);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        .swiper-button-next:hover,
+        .swiper-button-prev:hover {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .swiper-button-next::after,
+        .swiper-button-prev::after {
+            font-size: 1rem;
+            font-weight: 700;
+        }
+        .swiper-pagination-bullet {
+            background: var(--primary);
+            opacity: 0.3;
+        }
+        .swiper-pagination-bullet-active {
+            opacity: 1;
+            background: var(--accent);
+        }
+
+        /* ===== EMPLOYEE CARD ===== */
+        .employee-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.2rem 1rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            text-align: center;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            border-left: 4px solid #28a745;
+            width: 190px;
+            margin: 0 auto;
+        }
+        .employee-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+        }
+
+        /* ===== LEGACY CARD ===== */
+        .employee-card.legacy {
+            border-left-color: var(--legacy-gold);
+            background: var(--legacy-warm);
+        }
+        .employee-card.legacy .photo-wrapper {
+            border-color: var(--legacy-gold);
+        }
+        .employee-card.legacy:hover .photo-wrapper {
+            border-color: var(--accent);
+        }
+        .employee-card.legacy .post {
+            color: var(--legacy-gold) !important;
+            font-weight: 600;
+        }
+
+        .employee-card .photo-wrapper {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+            margin-bottom: 0.7rem;
+            border: 3px solid var(--primary);
+            transition: var(--transition);
+        }
+        .employee-card:hover .photo-wrapper {
+            border-color: var(--accent);
+            transform: scale(1.03);
+        }
+        .employee-card .photo-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .employee-card .photo-wrapper .avatar-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e8eaf6;
+            color: var(--primary);
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
+        .employee-card .name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary);
+            line-height: 1.2;
+            margin-bottom: 0.1rem;
+        }
+        .employee-card .post {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 0.3rem;
+        }
+        .employee-card .details {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            width: 100%;
+        }
+        .employee-card .details .label {
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+        .employee-card .status-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 0.15rem 0.6rem;
+            border-radius: 20px;
+            background: #28a745;
+            color: white;
+        }
+        .employee-card.legacy .status-badge {
+            background: var(--legacy-gold);
+            color: white;
+        }
+        .employee-card .active-period {
+            font-size: 0.7rem;
+            color: var(--legacy-text);
+            font-weight: 600;
+            margin-top: 0.1rem;
+        }
+
+        /* ===== LEGACY MESSAGE ===== */
+        .legacy-message {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #f0e6d0;
+            font-style: italic;
+            color: var(--legacy-text);
+            font-size: 0.78rem;
+            line-height: 1.5;
+            width: 100%;
+            text-align: left;
+        }
+        .legacy-message .quote-icon {
+            color: var(--legacy-gold);
+            font-size: 0.9rem;
+            margin-right: 3px;
+        }
+        .legacy-message .message-text {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .legacy-message .message-author {
+            font-style: normal;
+            font-weight: 500;
+            color: #5d4037;
+            margin-top: 3px;
+            font-size: 0.7rem;
+            text-align: right;
+        }
+
+        /* ===== QUICK VIEW MODAL ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.show {
+            display: flex;
+        }
+        .modal-content {
+            background: var(--white);
+            border-radius: 16px;
+            max-width: 600px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem;
+            position: relative;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .modal-content .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: var(--transition);
+            background: none;
+            border: none;
+        }
+        .modal-content .close-btn:hover {
+            color: var(--text-dark);
+            transform: rotate(90deg);
+        }
+        .modal-content .modal-grid {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 1.5rem;
+            margin-top: 0.5rem;
+        }
+        .modal-content .modal-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--accent);
+        }
+        .modal-content .modal-photo-placeholder {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: #e8eaf6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            color: var(--primary);
+            border: 4px solid var(--accent);
+        }
+        .modal-content .modal-info h2 {
+            color: var(--primary);
+            font-size: 1.3rem;
+            margin-bottom: 0.1rem;
+        }
+        .modal-content .modal-info .post-badge {
+            display: inline-block;
+            padding: 0.1rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: var(--bg-light);
+            color: var(--text-muted);
+            margin-bottom: 0.8rem;
+        }
+        .modal-content .modal-info .post-badge.legacy {
+            background: var(--legacy-warm);
+            color: var(--legacy-gold);
+            border: 1px solid var(--legacy-gold);
+        }
+        .modal-content .modal-info .detail-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0;
+            font-size: 0.85rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .modal-content .modal-info .detail-row i {
+            width: 18px;
+            color: var(--accent);
+        }
+        .modal-content .modal-info .detail-row .label {
+            color: var(--text-muted);
+            font-weight: 500;
+            min-width: 70px;
+        }
+        .modal-content .modal-info .legacy-message-full {
+            margin-top: 10px;
+            padding: 12px 16px;
+            background: var(--legacy-warm);
+            border-radius: 8px;
+            border-left: 3px solid var(--legacy-gold);
+            font-style: italic;
+            color: var(--legacy-text);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .modal-content .modal-info .legacy-message-full .author {
+            font-style: normal;
+            font-weight: 600;
+            color: #5d4037;
+            margin-top: 5px;
+            font-size: 0.8rem;
+        }
+
+        /* ===== LOADING & EMPTY STATES ===== */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-muted);
+            grid-column: 1 / -1;
+        }
+        .empty-state .icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .employee-card { width: 170px; }
+            .employee-card .photo-wrapper { width: 75px; height: 75px; }
+        }
+        @media (max-width: 768px) {
+            .gallery-wrapper { padding: 1rem; }
+            .gallery-hero { padding: 1.5rem 1rem; }
+            .gallery-hero h1 { font-size: 1.5rem; }
+            .gallery-hero .stats-row { gap: 1.5rem; }
+            .gallery-hero .stats-row .stat-number { font-size: 1.4rem; }
+            .gallery-toolbar { flex-direction: column; align-items: stretch; }
+            .gallery-toolbar input[type="text"] { width: 100%; }
+            .gallery-toolbar .filters { display: flex; flex-wrap: wrap; gap: 8px; }
+            .gallery-toolbar select { flex: 1; min-width: 120px; }
+            .gallery-tabs button { font-size: 0.8rem; padding: 0.5rem 0.8rem; }
+            .employee-card { width: 150px; padding: 0.8rem 0.6rem; }
+            .employee-card .photo-wrapper { width: 65px; height: 65px; }
+            .employee-card .name { font-size: 0.85rem; }
+            .employee-card .post { font-size: 0.7rem; }
+            .employee-card .details { font-size: 0.65rem; }
+            .modal-content .modal-grid { grid-template-columns: 1fr; text-align: center; }
+            .modal-content .modal-photo,
+            .modal-content .modal-photo-placeholder { width: 120px; height: 120px; margin: 0 auto; }
+            .legacy-message .message-text {
+                -webkit-line-clamp: 3;
+            }
+        }
+        @media (max-width: 480px) {
+            .employee-card { width: 130px; padding: 0.6rem 0.4rem; }
+            .employee-card .photo-wrapper { width: 55px; height: 55px; }
+            .gallery-hero h1 { font-size: 1.2rem; }
+            .gallery-hero .stats-row .stat-number { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== SITE HEADER ===== -->
+    <div id="site-header"></div>
+
+    <div class="gallery-wrapper">
+
+
+        <!-- ===== TOOLBAR ===== -->
+        <div class="gallery-toolbar">
+            <input type="text" id="searchInput" placeholder="🔍 Search by name, post, or department..." oninput="applyFilters()">
+            <div class="filters">
+                <select id="postFilter" onchange="applyFilters()">
+                    <option value="all">All Posts</option>
+                </select>
+                <select id="sortFilter" onchange="applyFilters()">
+                    <option value="seniority">📅 Seniority (Oldest First)</option>
+                    <option value="newest">📅 Newest First</option>
+                    <option value="name-asc">🔤 Name A-Z</option>
+                    <option value="name-desc">🔤 Name Z-A</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- ===== TABS ===== -->
+        <div class="gallery-tabs">
+            <button class="active" data-tab="active" onclick="switchTab('active', this)">
+                🟢 Active Staff
+                <span class="badge active-badge" id="activeTabBadge">0</span>
+            </button>
+            <button data-tab="legacy" onclick="switchTab('legacy', this)">
+                🏅 Legacy Members
+                <span class="badge legacy-badge" id="legacyTabBadge">0</span>
+            </button>
+        </div>
+
+        <!-- ===== EMPLOYEE CONTAINER ===== -->
+        <div id="employeesContainer">
+            <div class="empty-state">
+                <div class="icon">⏳</div>
+                <div>Loading employees...</div>
+            </div>
+        </div>
+
+    </div>
+
+            <!-- ===== HERO BANNER ===== -->
+        <div class="gallery-hero">
+            <h1>Our <span>Faculty</span> &amp; Staff</h1>
+            <p>Dedicated educators shaping the future of our students</p>
+            <div class="stats-row" id="statsBanner">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalCount">0</div>
+                    <div class="stat-label">Total Members</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="activeCount">0</div>
+                    <div class="stat-label">🟢 Active</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="legacyCount">0</div>
+                    <div class="stat-label">🏅 Legacy Members</div>
+                </div>
+            </div>
+        </div>
+
+    <div id="footer-placeholder"></div>
+
+    <!-- ===== QUICK VIEW MODAL ===== -->
+    <div class="modal-overlay" id="quickViewModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeQuickView()">✕</button>
+            <div class="modal-grid">
+                <div>
+                    <img id="modalPhoto" class="modal-photo" style="display:none;" alt="Employee Photo" />
+                    <div id="modalPhotoPlaceholder" class="modal-photo-placeholder">👤</div>
+                </div>
+                <div class="modal-info">
+                    <h2 id="modalName">Name</h2>
+                    <span id="modalPost" class="post-badge">Post</span>
+                    <div id="modalDetails"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== FIREBASE SDK ===== -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <!-- ===== SWIPER.JS ===== -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <script>
+        // ============================================================
+        //  FIREBASE CONFIG
+        // ============================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyAHmBCyGlSo1puz1LZ7k-4twg_XAcOqyRA",
+            authDomain: "svgms-backend.firebaseapp.com",
+            projectId: "svgms-backend",
+            storageBucket: "svgms-backend.firebasestorage.app",
+            messagingSenderId: "1065359559935",
+            appId: "1:1065359559935:web:977cea73a68e05813750ca"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // ============================================================
+        //  CONFIGURATION
+        // ============================================================
+        const POST_ORDER = {
+            'Principal': 1,
+            'Sr. Teacher': 2,
+            'Sr. Lecturer': 3,
+            'Lecturer': 4,
+            'Teacher': 5,
+            'Staff': 6,
+            'Other': 7
+        };
+
+        // ============================================================
+        //  STATE
+        // ============================================================
+        let allEmployees = [];
+        let swiperInstances = [];
+        let currentTab = 'active';
+
+        // ============================================================
+        //  DOM REFS
+        // ============================================================
+        const DOM = {
+            totalCount: document.getElementById('totalCount'),
+            activeCount: document.getElementById('activeCount'),
+            legacyCount: document.getElementById('legacyCount'),
+            activeTabBadge: document.getElementById('activeTabBadge'),
+            legacyTabBadge: document.getElementById('legacyTabBadge'),
+            searchInput: document.getElementById('searchInput'),
+            postFilter: document.getElementById('postFilter'),
+            sortFilter: document.getElementById('sortFilter'),
+            container: document.getElementById('employeesContainer'),
+            modal: document.getElementById('quickViewModal'),
+            modalPhoto: document.getElementById('modalPhoto'),
+            modalPhotoPlaceholder: document.getElementById('modalPhotoPlaceholder'),
+            modalName: document.getElementById('modalName'),
+            modalPost: document.getElementById('modalPost'),
+            modalDetails: document.getElementById('modalDetails')
+        };
+
+        // ============================================================
+        //  LOAD HEADER & FOOTER
+        // ============================================================
+        async function loadExternalComponents() {
+            try {
+                const [header, footer] = await Promise.all([
+                    fetch('header.html').then(r => r.text()),
+                    fetch('footer.html').then(r => r.text())
+                ]);
+                document.getElementById('site-header').innerHTML = header;
+                document.getElementById('footer-placeholder').innerHTML = footer;
+            } catch (error) {
+                console.warn('Failed to load external components:', error);
+                document.getElementById('site-header').innerHTML = `
+                    <div style="background:var(--primary);color:white;padding:1rem 2rem;text-align:center;">
+                        <h1 style="font-size:1.5rem;font-weight:700;">🏫 SVGMS</h1>
+                        <p style="opacity:0.8;font-size:0.9rem;">Shri Vishwakarma Group of Institutions</p>
+                    </div>
+                `;
+            }
+        }
+        loadExternalComponents();
+
+        // ============================================================
+        //  HELPER FUNCTIONS
+        // ============================================================
+        function getPostOrder(post) {
+            return POST_ORDER[post] || 999;
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return 'N/A';
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('en-US', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+        }
+
+        function getInitials(name) {
+            if (!name) return '?';
+            return name.charAt(0).toUpperCase();
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function calculateExperience(joiningDate, leavingDate) {
+            if (!joiningDate) return 0;
+            const start = new Date(joiningDate);
+            const end = leavingDate ? new Date(leavingDate) : new Date();
+            return Math.floor((end - start) / (1000 * 60 * 60 * 24 * 365));
+        }
+
+        // ============================================================
+        //  RENDER EMPLOYEE CARD
+        // ============================================================
+        function renderCard(emp, isLegacy = false) {
+            const experience = calculateExperience(emp.joiningDate, emp.leavingDate);
+            const yearsText = experience > 0 ? `${experience} yr${experience > 1 ? 's' : ''}` : 'New';
+
+            const photoHTML = emp.photoURL ?
+                `<img src="${escapeHtml(emp.photoURL)}" alt="${escapeHtml(emp.name)}" loading="lazy" />` :
+                `<div class="avatar-placeholder">${getInitials(emp.name)}</div>`;
+
+            let activePeriod = '';
+            if (isLegacy && emp.joiningDate && emp.leavingDate) {
+                const join = new Date(emp.joiningDate);
+                const leave = new Date(emp.leavingDate);
+                activePeriod = `${join.getFullYear()} - ${leave.getFullYear()}`;
+            }
+
+            // Legacy message
+            let legacyHTML = '';
+            if (isLegacy && emp.legacyMessage) {
+                legacyHTML = `
+                    <div class="legacy-message">
+                        <span class="quote-icon">❝</span>
+                        <span class="message-text">${escapeHtml(emp.legacyMessage)}</span>
+                        <div class="message-author">— ${escapeHtml(emp.name)}</div>
+                    </div>
+                `;
+            }
+
+            const cardClass = isLegacy ? 'legacy' : '';
+            const badgeText = isLegacy ? '🏅 Legacy Member' : '🟢 Active';
+
+            return `
+                <div class="employee-card ${cardClass}" 
+                     data-id="${emp.id}"
+                     onclick="openQuickView('${emp.id}')">
+                    <div class="photo-wrapper">
+                        ${photoHTML}
+                    </div>
+                    <span class="status-badge">${badgeText}</span>
+                    <div class="name">${escapeHtml(emp.name || 'Unknown')}</div>
+                    <div class="post">${isLegacy ? 'Former ' : ''}${escapeHtml(emp.post || 'Staff')}</div>
+                    <div class="details">
+                        ${isLegacy && activePeriod ? 
+                            `<div><span class="label">📅</span> ${escapeHtml(activePeriod)}</div>` :
+                            `<div><span class="label">📅</span> ${formatDate(emp.joiningDate)}</div>`
+                        }
+                        ${isLegacy && emp.leavingDate ? 
+                            `<div><span class="label">📅 Left:</span> ${formatDate(emp.leavingDate)}</div>` : ''}
+                        ${emp.department ? `<div>🏢 ${escapeHtml(emp.department)}</div>` : ''}
+                        ${!isLegacy ? `<div>⭐ ${yearsText}</div>` : ''}
+                    </div>
+                    ${legacyHTML}
+                </div>
+            `;
+        }
+
+        // ============================================================
+        //  LOAD EMPLOYEES
+        // ============================================================
+        async function loadEmployees() {
+            try {
+                const snapshot = await db.collection('employees')
+                    .orderBy('name')
+                    .get();
+
+                allEmployees = [];
+                const posts = new Set();
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const emp = { id: doc.id, ...data };
+                    allEmployees.push(emp);
+                    if (data.post) posts.add(data.post);
+                });
+
+                // Populate post filter
+                const postFilter = DOM.postFilter;
+                postFilter.innerHTML = '<option value="all">All Posts</option>';
+                [...posts].sort().forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p;
+                    opt.textContent = p;
+                    postFilter.appendChild(opt);
+                });
+
+                applyFilters();
+
+            } catch (error) {
+                console.error('Error loading employees:', error);
+                DOM.container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">❌</div>
+                        <div>Error loading employees. Please refresh.</div>
+                    </div>
+                `;
+            }
+        }
+
+        // ============================================================
+        //  APPLY FILTERS & SORT
+        // ============================================================
+        function applyFilters() {
+            const search = DOM.searchInput.value.toLowerCase().trim();
+            const postFilter = DOM.postFilter.value;
+            const sort = DOM.sortFilter.value;
+
+            let filtered = [...allEmployees];
+
+            // Search
+            if (search) {
+                filtered = filtered.filter(emp =>
+                    (emp.name || '').toLowerCase().includes(search) ||
+                    (emp.post || '').toLowerCase().includes(search) ||
+                    (emp.department || '').toLowerCase().includes(search) ||
+                    (emp.qualification || '').toLowerCase().includes(search)
+                );
+            }
+
+            // Separate active and legacy
+            let activeFiltered = filtered.filter(e => e.status !== 'left');
+            let legacyFiltered = filtered.filter(e => e.status === 'left');
+
+            // Post filter
+            if (postFilter !== 'all') {
+                activeFiltered = activeFiltered.filter(e => e.post === postFilter);
+                legacyFiltered = legacyFiltered.filter(e => e.post === postFilter);
+            }
+
+            // Sort
+            activeFiltered = sortEmployees(activeFiltered, sort);
+            legacyFiltered = sortEmployees(legacyFiltered, sort);
+
+            // Update stats
+            updateStats();
+
+            // Render based on current tab
+            if (currentTab === 'active') {
+                renderEmployees(activeFiltered, false);
+            } else {
+                renderEmployees(legacyFiltered, true);
+            }
+        }
+
+        // ============================================================
+        //  SORT EMPLOYEES
+        // ============================================================
+        function sortEmployees(employees, sortType) {
+            const sorted = [...employees];
+            switch (sortType) {
+                case 'seniority':
+                    return sorted.sort((a, b) => {
+                        const dateA = a.joiningDate ? new Date(a.joiningDate) : new Date(0);
+                        const dateB = b.joiningDate ? new Date(b.joiningDate) : new Date(0);
+                        return dateA - dateB;
+                    });
+                case 'newest':
+                    return sorted.sort((a, b) => {
+                        const dateA = a.joiningDate ? new Date(a.joiningDate) : new Date(0);
+                        const dateB = b.joiningDate ? new Date(b.joiningDate) : new Date(0);
+                        return dateB - dateA;
+                    });
+                case 'name-asc':
+                    return sorted.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+                case 'name-desc':
+                    return sorted.sort((a, b) => (b.name || '').localeCompare(a.name || ''));
+                default:
+                    return sorted;
+            }
+        }
+
+        // ============================================================
+        //  UPDATE STATS
+        // ============================================================
+        function updateStats() {
+            const active = allEmployees.filter(e => e.status !== 'left');
+            const legacy = allEmployees.filter(e => e.status === 'left');
+            const total = allEmployees.length;
+
+            DOM.totalCount.textContent = total;
+            DOM.activeCount.textContent = active.length;
+            DOM.legacyCount.textContent = legacy.length;
+            DOM.activeTabBadge.textContent = active.length;
+            DOM.legacyTabBadge.textContent = legacy.length;
+        }
+
+        // ============================================================
+        //  RENDER EMPLOYEES
+        // ============================================================
+        function renderEmployees(employees, isLegacy) {
+            const container = DOM.container;
+
+            if (employees.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">👀</div>
+                        <div>No ${isLegacy ? 'legacy members' : 'active employees'} found.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            // Group by post
+            const groups = {};
+            employees.forEach(emp => {
+                const post = emp.post || 'Other';
+                if (!groups[post]) groups[post] = [];
+                groups[post].push(emp);
+            });
+
+            // Sort posts by priority
+            const sortedPosts = Object.keys(groups).sort((a, b) => {
+                return getPostOrder(a) - getPostOrder(b);
+            });
+
+            let html = '';
+            const title = isLegacy ? '🏅 Legacy Members' : 'Active Staff';
+            const badgeClass = isLegacy ? 'legacy-badge' : '';
+
+            sortedPosts.forEach(post => {
+                const emps = groups[post];
+
+                html += `
+                    <div style="margin-bottom: 2rem;">
+                        <div class="section-header">
+                            <h3>${post}</h3>
+                            <span class="count-badge ${badgeClass}">${emps.length} ${emps.length === 1 ? 'member' : 'members'}</span>
+                        </div>
+                        <div class="swiper-container post-swiper" data-post="${post}">
+                            <div class="swiper-wrapper">
+                                ${emps.map(emp => `
+                                    <div class="swiper-slide">${renderCard(emp, isLegacy)}</div>
+                                `).join('')}
+                            </div>
+                            <div class="swiper-button-next"></div>
+                            <div class="swiper-button-prev"></div>
+                            <div class="swiper-pagination"></div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+
+            // Initialize Swiper for each section
+            setTimeout(() => {
+                document.querySelectorAll('.post-swiper').forEach((el) => {
+                    const slides = el.querySelectorAll('.swiper-slide');
+                    if (slides.length > 0) {
+                        const swiper = new Swiper(el, {
+                            slidesPerView: 'auto',
+                            spaceBetween: 16,
+                            centeredSlides: false,
+                            navigation: {
+                                nextEl: el.querySelector('.swiper-button-next'),
+                                prevEl: el.querySelector('.swiper-button-prev'),
+                            },
+                            pagination: {
+                                el: el.querySelector('.swiper-pagination'),
+                                clickable: true,
+                            },
+                            breakpoints: {
+                                320: { slidesPerView: 2, spaceBetween: 10 },
+                                480: { slidesPerView: 3, spaceBetween: 12 },
+                                768: { slidesPerView: 4, spaceBetween: 14 },
+                                1024: { slidesPerView: 5, spaceBetween: 16 },
+                                1200: { slidesPerView: 6, spaceBetween: 18 },
+                            },
+                        });
+                        swiperInstances.push(swiper);
+                    }
+                });
+            }, 100);
+        }
+
+        // ============================================================
+        //  TAB SWITCHING
+        // ============================================================
+        function switchTab(tab, button) {
+            currentTab = tab;
+            
+            document.querySelectorAll('.gallery-tabs button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            if (button) {
+                button.classList.add('active');
+            }
+            
+            applyFilters();
+        }
+
+        // ============================================================
+        //  QUICK VIEW MODAL
+        // ============================================================
+        function openQuickView(id) {
+            const emp = allEmployees.find(e => e.id === id);
+            if (!emp) return;
+
+            const isLegacy = emp.status === 'left';
+            const experience = calculateExperience(emp.joiningDate, emp.leavingDate);
+
+            // Photo
+            if (emp.photoURL) {
+                DOM.modalPhoto.src = emp.photoURL;
+                DOM.modalPhoto.style.display = 'block';
+                DOM.modalPhotoPlaceholder.style.display = 'none';
+            } else {
+                DOM.modalPhoto.style.display = 'none';
+                DOM.modalPhotoPlaceholder.style.display = 'flex';
+                DOM.modalPhotoPlaceholder.textContent = getInitials(emp.name);
+            }
+
+            DOM.modalName.textContent = emp.name || 'Unknown';
+            DOM.modalPost.textContent = isLegacy ? 'Former ' + (emp.post || 'Staff') : (emp.post || 'Staff');
+            DOM.modalPost.className = `post-badge ${isLegacy ? 'legacy' : ''}`;
+
+            let activePeriod = '';
+            if (isLegacy && emp.joiningDate && emp.leavingDate) {
+                const join = new Date(emp.joiningDate);
+                const leave = new Date(emp.leavingDate);
+                activePeriod = `${join.getFullYear()} - ${leave.getFullYear()}`;
+            }
+
+            let detailsHTML = `
+                <div class="detail-row"><i class="fas fa-calendar-alt"></i> <span class="label">${isLegacy ? 'Active:' : 'Joined:'}</span> ${isLegacy && activePeriod ? activePeriod : formatDate(emp.joiningDate)}</div>
+                ${isLegacy && emp.leavingDate ? 
+                    `<div class="detail-row"><i class="fas fa-calendar-times"></i> <span class="label">Left:</span> ${formatDate(emp.leavingDate)}</div>` : ''}
+                ${!isLegacy ? 
+                    `<div class="detail-row"><i class="fas fa-star"></i> <span class="label">Experience:</span> ${experience > 0 ? experience + ' years' : 'New'}</div>` : ''}
+                ${emp.department ? 
+                    `<div class="detail-row"><i class="fas fa-building"></i> <span class="label">Department:</span> ${escapeHtml(emp.department)}</div>` : ''}
+                ${emp.qualification ? 
+                    `<div class="detail-row"><i class="fas fa-graduation-cap"></i> <span class="label">Qualification:</span> ${escapeHtml(emp.qualification)}</div>` : ''}
+                ${emp.email ? 
+                    `<div class="detail-row"><i class="fas fa-envelope"></i> <span class="label">Email:</span> ${escapeHtml(emp.email)}</div>` : ''}
+                ${emp.phone ? 
+                    `<div class="detail-row"><i class="fas fa-phone"></i> <span class="label">Phone:</span> ${escapeHtml(emp.phone)}</div>` : ''}
+                <div class="detail-row"><i class="fas fa-medal"></i> <span class="label">Status:</span> ${isLegacy ? '🏅 Legacy Member' : '🟢 Active'}</div>
+            `;
+
+            // Legacy message in modal
+            if (isLegacy && emp.legacyMessage) {
+                detailsHTML += `
+                    <div class="legacy-message-full">
+                        ❝ ${escapeHtml(emp.legacyMessage)} ❞
+                        <div class="author">— ${escapeHtml(emp.name)}</div>
+                    </div>
+                `;
+            }
+
+            DOM.modalDetails.innerHTML = detailsHTML;
+            DOM.modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeQuickView() {
+            DOM.modal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        DOM.modal.addEventListener('click', function(e) {
+            if (e.target === this) closeQuickView();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeQuickView();
+        });
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            loadEmployees();
+        });
+
+        console.log('✅ Employee Gallery loaded successfully!');
+    </script>
+
+</body>
+</html>

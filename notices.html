@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notices & Circulars - SVGMS</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="imgs/logo1.png" type="image/png" />
+
+    <style>
+        .notices-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem 2rem;
+        }
+
+        .page-title {
+            margin: 2rem 0;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid var(--accent);
+        }
+
+        .page-title h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+
+        .page-title p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .notice-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--accent);
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .notice-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        .notice-card .notice-title {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 0.3rem;
+        }
+
+        .notice-card .notice-meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .notice-card .notice-description {
+            color: var(--text-dark);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .notice-card .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.5rem;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .notice-card .pdf-btn:hover {
+            background: #c82333;
+        }
+
+        .no-notices {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .no-notices .big-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .notices-wrapper {
+                padding: 0 1rem 1rem;
+            }
+            .page-title h1 {
+                font-size: 2rem;
+            }
+            .notice-card {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== TOP RIBBON ===== -->
+    <div class="top-ribbon">
+        <div class="ribbon-welcome">WELCOME TO THE SVGMS BHIM</div>
+        <div class="ribbon-info">
+            <span><strong>REGION:</strong> RAJSAMAND</span>
+            <span><strong>AFFILIATION NO:</strong> 0000000</span>
+            <span><strong>SCHOOL CODE:</strong> 0000</span>
+        </div>
+    </div>
+
+    <!-- ===== HEADER ===== -->
+    <header class="main-header">
+        <div class="brand-container">
+            <a class="brand-link" href="index.html">
+                <img class="logo-image" src="https://raw.githubusercontent.com/ishrawat/imagess/refs/heads/main/logo.jpg" alt="School Logo">
+                <div class="brand-text">
+                    <h1>Swami Vivekanand Govt. Model School</h1>
+                    <p>Bhim, Rajasthan</p>
+                </div>
+            </a>
+        </div>
+    </header>
+
+    <!-- ===== NAVIGATION ===== -->
+    <div id="nav-placeholder"></div>
+
+    <!-- ===== NOTICES CONTENT ===== -->
+    <div class="notices-wrapper">
+
+        <div class="page-title">
+            <h1>📄 Notices & Circulars</h1>
+            <p>Official notices and circulars from the school administration</p>
+        </div>
+
+        <div id="noticesContainer">
+            <div class="no-notices">
+                <div class="big-icon">📄</div>
+                <p>Loading notices...</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <footer>
+        <p>&copy; 2026 Swami Vivekanand Govt. Model School, Bhim. All Rights Reserved.</p>
+    </footer>
+
+    <!-- ===== FIREBASE SDK ===== -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // ===== FIREBASE CONFIG =====
+        const firebaseConfig = {
+            apiKey: "AIzaSyAHmBCyGlSo1puz1LZ7k-4twg_XAcOqyRA",
+            authDomain: "svgms-backend.firebaseapp.com",
+            projectId: "svgms-backend",
+            storageBucket: "svgms-backend.firebasestorage.app",
+            messagingSenderId: "1065359559935",
+            appId: "1:1065359559935:web:977cea73a68e05813750ca"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // ===== LOAD NOTICES =====
+        async function loadNotices() {
+            const container = document.getElementById('noticesContainer');
+            container.innerHTML = '<div class="no-notices"><div class="big-icon">📄</div><p>Loading notices...</p></div>';
+
+            try {
+                const snapshot = await db.collection('notices')
+                    .orderBy('date', 'desc')
+                    .get();
+
+                if (snapshot.empty) {
+                    container.innerHTML = `
+                        <div class="no-notices">
+                            <div class="big-icon">📭</div>
+                            <p>No notices available. Check back later!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const notice = doc.data();
+                    
+                    const card = document.createElement('div');
+                    card.className = 'notice-card';
+                    
+                    const date = notice.date ? new Date(notice.date) : new Date();
+                    const formattedDate = date.toLocaleDateString('en-IN', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric'
+                    });
+
+                    card.innerHTML = `
+                        <h2 class="notice-title">${notice.title}</h2>
+                        <div class="notice-meta">
+                            📅 ${formattedDate} | 👤 ${notice.author || 'Admin'}
+                        </div>
+                        <div class="notice-description">${notice.description || ''}</div>
+                        ${notice.pdfUrl ? `<a href="${notice.pdfUrl}?fl_attachment=true" target="_blank" class="pdf-btn">📥 Download PDF</a>` : ''}
+                    `;
+                    container.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error('Error loading notices:', error);
+                container.innerHTML = `
+                    <div class="no-notices">
+                        <div class="big-icon">❌</div>
+                        <p>Error loading notices. Please refresh.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // ===== LOAD ON PAGE LOAD =====
+        document.addEventListener('DOMContentLoaded', loadNotices);
+    </script>
+    
+    <script>
+    // Load navigation
+    fetch('nav.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('nav-placeholder').innerHTML = data;
+        });
+</script>
+
+</body>
+</html>

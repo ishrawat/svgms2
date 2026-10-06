@@ -1,0 +1,84 @@
+<!-- ===== NAVIGATION ===== -->
+<nav class="nav-container">
+    <ul class="main-nav">
+        <li class="nav-item">
+            <a href="index.html#home" class="nav-link" onclick="showPage('home'); return false;">Home</a>
+        </li>
+        
+        <li class="nav-item">
+            <button type="button" class="nav-link" onclick="toggleMenu(event, this)">School ▾</button>
+            <ul class="dropdown-menu">
+                <li><a href="index.html#about" onclick="showPage('about'); return false;">About School</a></li>
+                <li><a href="employees.html">Our Team</a></li>
+                <li><a href="index.html#principal" onclick="showPage('principal'); return false;">Principal's Message</a></li>
+                <li><a href="gallery.html">School Infrastructure</a></li>
+                <li><a href="index.html#contact" onclick="showPage('contact'); return false;">Transport facilities</a></li>
+                <li><a href="library.html">Computer Lab</a></li>
+                <li><a href="gallery.html">Games &amp; Sports</a></li>
+                <li><a href="#">Library</a></li>
+                <li><a href="#">Yoga &amp; Meditation</a></li>
+                <li><a href="#">Art &amp; Craft</a></li>
+            </ul>
+        </li>
+        
+        
+        <li class="nav-item">
+            <button type="button" class="nav-link" onclick="toggleMenu(event, this)">Academics ▾</button>
+            <ul class="dropdown-menu">
+                <li><a href="methodology.html">Methodology</a></li>
+                <li><a href="academic-planner.html">Academic Session Planner</a></li>
+                <li><a href="cbse-corner.html">CBSE Corner</a></li>
+                <li><a href="exams-cce.html">Exams &amp; CCE</a></li>
+
+            </ul>
+        </li>
+
+        <li class="nav-item">
+            <button type="button" class="nav-link" onclick="toggleMenu(event, this)">Admission ▾</button>
+            <ul class="dropdown-menu">
+                <li><a href="shortlist.html">ShortList of Admission Candidates</a></li>
+                <li><a href="student-registration.html">Rules &amp; Regulations</a></li>
+                <li><a href="student-registration.html">Parent's Involvement</a></li>
+                <li><a href="admin-timings.html">School Timings</a></li>
+                <li><a href="index.html#contact" onclick="showPage('contact'); return false;">School Uniform</a></li>
+            </ul>
+        </li>
+        
+        <li class="nav-item"><a href="library.html" class="nav-link">Digital Library</a></li>
+        
+        <li class="nav-item">
+            <button type="button" class="nav-link" onclick="toggleMenu(event, this)">News ▾</button>
+            <ul class="dropdown-menu">
+                <li><a href="news.html">News &amp; Event</a></li>
+                <li><a href="notices.html">Notices &amp; Downloads</a></li>
+                <li><a href="bhamashah.html">Bhamashah</a></li>
+                <li><a href="awards.html">Awards</a></li>
+                <li><a href="shortlist.html">ShortList of Admission Candidates</a></li>
+            </ul>
+        </li>
+        
+        <li class="nav-item">
+            <button type="button" class="nav-link" onclick="toggleMenu(event, this)">Gallery ▾</button>
+            <ul class="dropdown-menu">
+                <li><a href="gallery.html">Photo Gallery</a></li>
+            </ul>
+        </li>
+        
+        <li class="nav-item">
+            <a href="index.html#contact" class="nav-link" onclick="showPage('contact'); return false;">Contact</a>
+        </li>
+            
+        <li class="nav-item">
+            <a href="admin.html" class="nav-link">🔐 Staff Login</a>
+        </li>
+        <!-- ===== STUDENT ZONE (with Rocket Animation) ===== -->
+
+        <!-- ===== STUDENT ZONE (with FULL SCREEN Rocket Animation) ===== -->
+        <li class="nav-item" id="studentZoneContainer">
+            <a href="#" class="nav-link" id="studentZoneLink" style="text-decoration: none; color: inherit; display: inline-flex; align-items: center; gap: 6px;">
+                <span id="rocketSpan" style="display: inline-block; font-size: 1.2rem;">🚀</span>
+                <span>Student Zone</span>
+            </a>
+        </li>
+    </ul>
+</nav>

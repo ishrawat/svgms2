@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bhamashah - SVGMS</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="imgs/logo1.png" type="image/png" />
+
+    <style>
+        .page-wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 3rem;
+        }
+
+        .page-title {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid var(--accent);
+        }
+
+        .page-title h1 {
+            font-size: 2rem;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .page-title p {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .donors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .donor-card {
+            background: var(--white);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--accent);
+            transition: var(--transition);
+            text-align: center;
+            padding-bottom: 1rem;
+        }
+
+        .donor-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .donor-card .donor-photo {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: var(--bg-light);
+        }
+
+        .donor-card .donor-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin: 0.8rem 0 0.2rem;
+            padding: 0 1rem;
+        }
+
+        .donor-card .donor-donation {
+            font-size: 0.95rem;
+            color: var(--accent);
+            font-weight: 500;
+            margin-bottom: 0.2rem;
+            padding: 0 1rem;
+        }
+
+        .donor-card .donor-description {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            padding: 0 1rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+        }
+
+        .donor-card .donor-date {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            padding: 0 1rem;
+        }
+
+        .no-donors {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .no-donors .icon {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .page-wrapper {
+                padding: 1rem 0.8rem 2rem;
+            }
+            .page-title h1 {
+                font-size: 1.5rem;
+            }
+            .donors-grid {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                gap: 1rem;
+            }
+            .donor-card .donor-photo {
+                height: 160px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .donors-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.8rem;
+            }
+            .donor-card .donor-photo {
+                height: 130px;
+            }
+            .donor-card .donor-name {
+                font-size: 0.9rem;
+            }
+            .donor-card .donor-donation {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="header-placeholder"></div>
+    <div id="nav-placeholder"></div>
+
+    <div class="page-wrapper">
+
+        <div class="page-title">
+            <h1>Bhamashah</h1>
+            <p>Honouring our generous donors and supporters</p>
+        </div>
+
+        <div id="donorsContainer">
+            <div class="no-donors">
+                <span class="icon">🙏</span>
+                <p>Loading donors...</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // ===== LOAD HEADER, NAV, FOOTER =====
+        fetch('header.html').then(r => r.text()).then(data => document.getElementById('header-placeholder').innerHTML = data);
+        fetch('nav.html').then(r => r.text()).then(data => document.getElementById('nav-placeholder').innerHTML = data);
+        fetch('footer.html').then(r => r.text()).then(data => document.getElementById('footer-placeholder').innerHTML = data);
+
+        // ===== FIREBASE CONFIG =====
+        const firebaseConfig = {
+            apiKey: "AIzaSyAHmBCyGlSo1puz1LZ7k-4twg_XAcOqyRA",
+            authDomain: "svgms-backend.firebaseapp.com",
+            projectId: "svgms-backend",
+            storageBucket: "svgms-backend.firebasestorage.app",
+            messagingSenderId: "1065359559935",
+            appId: "1:1065359559935:web:977cea73a68e05813750ca"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // ===== LOAD DONORS =====
+        async function loadDonors() {
+            const container = document.getElementById('donorsContainer');
+
+            try {
+                const snapshot = await db.collection('donors')
+                    .orderBy('date', 'desc')
+                    .get();
+
+                if (snapshot.empty) {
+                    container.innerHTML = `
+                        <div class="no-donors">
+                            <span class="icon">🙏</span>
+                            <p>No donors yet. Check back soon!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '<div class="donors-grid">';
+                snapshot.forEach(doc => {
+                    const donor = doc.data();
+                    const date = donor.date ? new Date(donor.date) : new Date();
+                    const formattedDate = date.toLocaleDateString('en-IN', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric'
+                    });
+
+                    html += `
+                        <div class="donor-card">
+                            <img class="donor-photo" src="${donor.photoUrl || 'https://via.placeholder.com/300x200?text=No+Image'}" alt="${donor.name}">
+                            <div class="donor-name">${donor.name}</div>
+                            <div class="donor-donation">${donor.donation || ''}</div>
+                            ${donor.description ? `<div class="donor-description">${donor.description}</div>` : ''}
+                            <div class="donor-date">📅 ${formattedDate}</div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                container.innerHTML = html;
+
+            } catch (error) {
+                console.error('Error loading donors:', error);
+                container.innerHTML = `
+                    <div class="no-donors">
+                        <span class="icon">❌</span>
+                        <p>Error loading donors. Please refresh.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // ===== TOGGLE MENU =====
+        function toggleMenu(event, element) {
+            event.preventDefault();
+            event.stopPropagation();
+            const parent = element.closest('.nav-item');
+            const menu = parent.querySelector('.dropdown-menu');
+            if (!menu) return;
+            document.querySelectorAll('.nav-item').forEach(nav => {
+                if (nav !== parent) {
+                    nav.classList.remove('active');
+                    const m = nav.querySelector('.dropdown-menu');
+                    if (m) m.style.display = 'none';
+                }
+            });
+            if (parent.classList.contains('active')) {
+                parent.classList.remove('active');
+                menu.style.display = 'none';
+            } else {
+                parent.classList.add('active');
+                menu.style.display = 'block';
+            }
+        }
+
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.nav-item')) {
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                    const menu = item.querySelector('.dropdown-menu');
+                    if (menu) menu.style.display = 'none';
+                });
+            }
+        });
+
+        function showPage(pageName) {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                const menu = item.querySelector('.dropdown-menu');
+                if (menu) menu.style.display = 'none';
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.location.href = `index.html#${pageName}`;
+        }
+
+        // ===== LOAD ON PAGE LOAD =====
+        document.addEventListener('DOMContentLoaded', loadDonors);
+    </script>
+
+</body>
+</html>

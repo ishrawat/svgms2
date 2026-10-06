@@ -1,0 +1,74 @@
+<link rel="icon" href="imgs/logo1.png" type="image/png" />
+
+<!-- ===== TOP RIBBON ===== -->
+<div class="top-ribbon">
+    <div class="ribbon-welcome">WELCOME TO THE SVGMS BHIM</div>
+    <div class="ribbon-info">
+        <span><strong>REGION:</strong> RAJSAMAND</span>
+        <span><strong>AFFILIATION NO:</strong> 0000000</span>
+        <span><strong>SCHOOL CODE:</strong> 0000</span>
+    </div>
+</div>
+
+<!-- ===== HEADER ===== -->
+<header class="main-header">
+    <div class="brand-container">
+        <a class="brand-link" href="index.html">
+            <img class="logo-image" src="https://raw.githubusercontent.com/ishrawat/imagess/refs/heads/main/logo.jpg" alt="School Logo">
+            <div class="brand-text">
+                <h1>Swami Vivekanand Govt. Model School</h1>
+                <p>Bhim, Rajasthan</p>
+            </div>
+        </a>
+    </div>
+
+        <!-- ===== FLOATING THOUGHT BOX ===== -->
+
+        <!-- Minimized Icon -->
+        <div id="thoughtIcon" onclick="openThought()" style="position:fixed; bottom:15%; right:25px; z-index:9999; cursor:pointer; background:var(--primary); color:white; width:55px; height:55px; border-radius:50%; display:none; align-items:center; justify-content:center; font-size:1.8rem; box-shadow:0 4px 20px rgba(0,0,0,0.2); transition:transform 0.3s ease;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+            💭
+        </div>
+
+        <!-- Expanded Thought Box -->
+        <div id="thoughtBox" style="display:none; position:fixed; bottom:15%; right:25px; z-index:9999; background:var(--white); border-radius:12px; box-shadow:0 8px 35px rgba(0,0,0,0.15); border-top:4px solid var(--accent); max-width:340px; width:90%; padding:1.2rem 1.5rem; animation:slideInRight 0.4s ease;">
+
+            <!-- Header -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <span style="font-size:1.1rem;">💭</span>
+                    <span style="font-weight:600; color:var(--primary); font-size:0.85rem;">Principal's Message</span>
+                </div>
+                <button onclick="closeThought()" style="background:none; border:none; font-size:1.1rem; cursor:pointer; color:#999; padding:0 0.3rem; transition:color 0.2s;" onmouseover="this.style.color='#333'" onmouseout="this.style.color='#999'">✕</button>
+            </div>
+
+            <!-- Message -->
+            <div id="thoughtMessage" style="color:var(--text-dark); font-size:0.95rem; line-height:1.6; font-style:italic; margin-bottom:0.3rem; min-height:40px;">
+                Loading...
+            </div>
+
+            <!-- Footer -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.5rem; border-top:1px solid var(--bg-light); padding-top:0.5rem;">
+                <span id="thoughtAuthor" style="font-size:0.75rem; color:var(--text-muted); font-weight:500;">— Principal</span>
+                <span id="thoughtDate" style="font-size:0.7rem; color:var(--text-muted);"></span>
+            </div>
+
+        </div>
+
+        <!-- ===== ANIMATION STYLES ===== -->
+        <style>
+            @keyframes slideInRight {
+                from { transform: translateX(30px); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; transform: scale(0.9); }
+                to { opacity: 1; transform: scale(1); }
+            }
+            #thoughtIcon {
+                animation: fadeIn 0.3s ease;
+            }
+        </style>
+
+
+
+</header>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shortlist - SVGMS</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="imgs/logo1.png" type="image/png" />
+
+    <style>
+        .page-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 3rem;
+        }
+
+        .page-title {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid var(--accent);
+        }
+
+        .page-title h1 {
+            font-size: 2rem;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .page-title p {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .shortlist-item {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.2rem;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--accent);
+            transition: var(--transition);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .shortlist-item:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .shortlist-item .info {
+            flex: 1;
+        }
+
+        .shortlist-item .info .title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.2rem;
+        }
+
+        .shortlist-item .info .message {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 0.2rem;
+        }
+
+        .shortlist-item .info .date {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .shortlist-item .btn-pdf {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition);
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .shortlist-item .btn-pdf:hover {
+            background: var(--primary-light);
+        }
+
+        .no-shortlists {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .no-shortlists .icon {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .page-wrapper {
+                padding: 1rem 0.8rem 2rem;
+            }
+            .page-title h1 {
+                font-size: 1.5rem;
+            }
+            .shortlist-item {
+                flex-direction: column;
+                text-align: center;
+            }
+            .shortlist-item .btn-pdf {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="header-placeholder"></div>
+    <div id="nav-placeholder"></div>
+
+    <div class="page-wrapper">
+
+        <div class="page-title">
+            <h1>📋 Shortlist of Admission Candidates</h1>
+            <p>List of selected candidates for admission</p>
+        </div>
+
+        <div id="shortlistContainer">
+            <div class="no-shortlists">
+                <span class="icon">📋</span>
+                <p>Loading shortlists...</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        fetch('header.html').then(r => r.text()).then(data => document.getElementById('header-placeholder').innerHTML = data);
+        fetch('nav.html').then(r => r.text()).then(data => document.getElementById('nav-placeholder').innerHTML = data);
+        fetch('footer.html').then(r => r.text()).then(data => document.getElementById('footer-placeholder').innerHTML = data);
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAHmBCyGlSo1puz1LZ7k-4twg_XAcOqyRA",
+            authDomain: "svgms-backend.firebaseapp.com",
+            projectId: "svgms-backend",
+            storageBucket: "svgms-backend.firebasestorage.app",
+            messagingSenderId: "1065359559935",
+            appId: "1:1065359559935:web:977cea73a68e05813750ca"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        async function loadShortlists() {
+            const container = document.getElementById('shortlistContainer');
+
+            try {
+                const snapshot = await db.collection('shortlist')
+                    .orderBy('date', 'desc')
+                    .get();
+
+                if (snapshot.empty) {
+                    container.innerHTML = `
+                        <div class="no-shortlists">
+                            <span class="icon">📋</span>
+                            <p>No shortlists uploaded yet. Check back soon!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '';
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const date = data.date ? new Date(data.date) : new Date();
+                    const formattedDate = date.toLocaleDateString('en-IN', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric'
+                    });
+
+                    html += `
+                        <div class="shortlist-item">
+                            <div class="info">
+                                <div class="title">${data.title || 'Shortlist'}</div>
+                                <div class="message">${data.message || ''}</div>
+                                <div class="date">📅 Uploaded on ${formattedDate}</div>
+                            </div>
+                            <a href="${data.pdfUrl}" target="_blank" class="btn-pdf">
+                                📥 Download PDF
+                            </a>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+
+            } catch (error) {
+                console.error('Error loading shortlists:', error);
+                container.innerHTML = `
+                    <div class="no-shortlists">
+                        <span class="icon">❌</span>
+                        <p>Error loading shortlists. Please refresh.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function toggleMenu(event, element) {
+            event.preventDefault();
+            event.stopPropagation();
+            const parent = element.closest('.nav-item');
+            const menu = parent.querySelector('.dropdown-menu');
+            if (!menu) return;
+            document.querySelectorAll('.nav-item').forEach(nav => {
+                if (nav !== parent) {
+                    nav.classList.remove('active');
+                    const m = nav.querySelector('.dropdown-menu');
+                    if (m) m.style.display = 'none';
+                }
+            });
+            if (parent.classList.contains('active')) {
+                parent.classList.remove('active');
+                menu.style.display = 'none';
+            } else {
+                parent.classList.add('active');
+                menu.style.display = 'block';
+            }
+        }
+
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.nav-item')) {
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                    const menu = item.querySelector('.dropdown-menu');
+                    if (menu) menu.style.display = 'none';
+                });
+            }
+        });
+
+        function showPage(pageName) {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                const menu = item.querySelector('.dropdown-menu');
+                if (menu) menu.style.display = 'none';
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.location.href = `index.html#${pageName}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', loadShortlists);
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Messages - SVGMS</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="imgs/logo1.png" type="image/png" />
+
+    <style>
+        /* ===== MESSAGES PAGE STYLES ===== */
+        .messages-wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 2rem 3rem;
+        }
+
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--bg-light);
+        }
+
+        .page-header h1 {
+            color: var(--primary);
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .page-header .message-count {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            background: var(--bg-light);
+            padding: 0.3rem 1.2rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        /* ===== FILTERS ===== */
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem 1.2rem;
+            background: var(--white);
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            border: 1px solid #eef0f2;
+        }
+
+        .filter-bar .search-box {
+            flex: 1;
+            min-width: 180px;
+            padding: 0.5rem 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background: var(--white);
+            transition: var(--transition);
+            color: var(--text-dark);
+        }
+
+        .filter-bar .search-box:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.08);
+        }
+
+        .filter-bar .search-box::placeholder {
+            color: #aaa;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-group select {
+            padding: 0.45rem 0.8rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            background: var(--white);
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: var(--transition);
+            min-width: 110px;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23666'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.8rem center;
+            padding-right: 2rem;
+        }
+
+        .filter-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            margin-left: auto;
+        }
+
+        .filter-actions .btn-apply {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.45rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: var(--transition);
+            letter-spacing: 0.3px;
+        }
+
+        .filter-actions .btn-apply:hover {
+            background: var(--primary-light);
+        }
+
+        .filter-actions .btn-clear {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid #e0e0e0;
+            padding: 0.45rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .filter-actions .btn-clear:hover {
+            background: var(--bg-light);
+            border-color: #ccc;
+        }
+
+        /* Active Filters */
+        .active-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .active-filters .filter-tag {
+            background: var(--bg-light);
+            padding: 0.2rem 0.8rem;
+            border-radius: 16px;
+            font-size: 0.78rem;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            border: 1px solid #e8eaed;
+        }
+
+        .active-filters .filter-tag .remove {
+            cursor: pointer;
+            color: #999;
+            font-weight: 400;
+            font-size: 1rem;
+            line-height: 1;
+            transition: var(--transition);
+        }
+
+        .active-filters .filter-tag .remove:hover {
+            color: #dc3545;
+        }
+
+        /* ===== MESSAGE ITEM ===== */
+        .message-item {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 0.8rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            border: 1px solid #f0f0f0;
+            transition: var(--transition);
+        }
+
+        .message-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            border-color: var(--accent);
+        }
+
+        .message-item .msg-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .message-item .msg-date {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .message-item .msg-badges {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+
+        .message-item .badge {
+            font-size: 0.6rem;
+            padding: 0.1rem 0.6rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .message-item .badge-source {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .message-item .badge-source.telegram {
+            background: #e8f4fd;
+            color: #0088cc;
+        }
+
+        .message-item .badge-source.admin {
+            background: #eef1f5;
+            color: var(--primary);
+        }
+
+        .message-item .badge-pdf {
+            background: #fce8e8;
+            color: #c62828;
+        }
+
+        .message-item .badge-category {
+            background: #f5f2eb;
+            color: var(--primary);
+        }
+
+        .message-item .msg-text {
+            font-size: 1rem;
+            color: var(--text-dark);
+            margin: 0.3rem 0;
+            line-height: 1.5;
+            font-weight: 400;
+        }
+
+        .message-item .msg-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid #f5f5f5;
+        }
+
+        .message-item .msg-author {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .message-item .msg-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .message-item .msg-actions .pdf-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: #f0f0f0;
+            color: var(--text-dark);
+            text-decoration: none;
+            padding: 0.15rem 0.7rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            transition: var(--transition);
+        }
+
+        .message-item .msg-actions .pdf-link:hover {
+            background: #e0e0e0;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state .icon {
+            font-size: 3.5rem;
+            display: block;
+            margin-bottom: 0.8rem;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            font-size: 1rem;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.3rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .pagination button {
+            padding: 0.3rem 0.9rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            background: var(--white);
+            color: var(--text-dark);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .pagination button:hover {
+            background: var(--bg-light);
+            border-color: #ccc;
+        }
+
+        .pagination button.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .pagination button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 992px) {
+            .messages-wrapper {
+                padding: 1.5rem 1.5rem 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .messages-wrapper {
+                padding: 1rem 1rem 1.5rem;
+            }
+
+            .page-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .page-header .message-count {
+                font-size: 0.75rem;
+                padding: 0.2rem 0.8rem;
+            }
+
+            .filter-bar {
+                padding: 0.8rem;
+                gap: 0.6rem;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-bar .search-box {
+                min-width: auto;
+                width: 100%;
+                font-size: 0.85rem;
+                padding: 0.4rem 0.8rem;
+            }
+
+            .filter-group {
+                width: 100%;
+                gap: 0.4rem;
+            }
+
+            .filter-group select {
+                flex: 1;
+                min-width: 0;
+                font-size: 0.8rem;
+                padding: 0.35rem 0.6rem;
+                padding-right: 1.6rem;
+            }
+
+            .filter-actions {
+                width: 100%;
+                margin-left: 0;
+                gap: 0.4rem;
+            }
+
+            .filter-actions .btn-apply,
+            .filter-actions .btn-clear {
+                flex: 1;
+                text-align: center;
+                font-size: 0.8rem;
+                padding: 0.4rem 0.8rem;
+            }
+
+            .message-item {
+                padding: 0.8rem 1rem;
+            }
+
+            .message-item .msg-text {
+                font-size: 0.9rem;
+            }
+
+            .message-item .msg-date {
+                font-size: 0.7rem;
+            }
+
+            .message-item .badge {
+                font-size: 0.55rem;
+                padding: 0.05rem 0.5rem;
+            }
+
+            .pagination button {
+                font-size: 0.75rem;
+                padding: 0.2rem 0.6rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .messages-wrapper {
+                padding: 0.8rem 0.6rem 1.2rem;
+            }
+
+            .page-header h1 {
+                font-size: 1.2rem;
+            }
+
+            .filter-group select {
+                font-size: 0.7rem;
+                padding: 0.3rem 0.4rem;
+                padding-right: 1.2rem;
+                min-width: 0;
+            }
+
+            .filter-actions .btn-apply,
+            .filter-actions .btn-clear {
+                font-size: 0.7rem;
+                padding: 0.3rem 0.6rem;
+            }
+
+            .message-item {
+                padding: 0.6rem 0.8rem;
+            }
+
+            .message-item .msg-text {
+                font-size: 0.8rem;
+            }
+
+            .message-item .msg-badges {
+                gap: 0.2rem;
+            }
+
+            .message-item .badge {
+                font-size: 0.5rem;
+                padding: 0.05rem 0.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== HEADER + RIBBON ===== -->
+    <div id="header-placeholder"></div>
+
+    <!-- ===== NAVIGATION ===== -->
+    <div id="nav-placeholder"></div>
+
+    <!-- ===== MESSAGES CONTENT ===== -->
+    <div class="messages-wrapper">
+
+        <div class="page-header">
+            <h1>📋 All Messages</h1>
+            <span class="message-count" id="messageCount">Loading...</span>
+        </div>
+
+        <!-- ===== FILTER BAR ===== -->
+        <div class="filter-bar">
+            <input type="text" class="search-box" id="searchInput" placeholder="Search messages...">
+
+            <div class="filter-group">
+                <select id="yearFilter">
+                    <option value="all">All Years</option>
+                </select>
+                <select id="monthFilter">
+                    <option value="all">All Months</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+                <select id="categoryFilter">
+                    <option value="all">All Categories</option>
+                    <option value="notice">Notice</option>
+                    <option value="event">Event</option>
+                    <option value="exam">Exam</option>
+                    <option value="general">General</option>
+                </select>
+            </div>
+
+            <div class="filter-actions">
+                <button class="btn-apply" onclick="applyFilters()">Apply</button>
+                <button class="btn-clear" onclick="clearFilters()">Clear</button>
+            </div>
+        </div>
+
+        <!-- ===== ACTIVE FILTERS ===== -->
+        <div class="active-filters" id="activeFilters"></div>
+
+        <!-- ===== MESSAGES LIST ===== -->
+        <div id="messagesList">
+            <div class="empty-state">
+                <span class="icon">📭</span>
+                <p>Loading messages...</p>
+            </div>
+        </div>
+
+        <!-- ===== PAGINATION ===== -->
+        <div class="pagination" id="pagination"></div>
+
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <div id="footer-placeholder"></div>
+
+    <!-- ===== FIREBASE SDK ===== -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // ===== LOAD HEADER =====
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-placeholder').innerHTML = data;
+            });
+
+        // ===== LOAD NAVIGATION =====
+        fetch('nav.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('nav-placeholder').innerHTML = data;
+            });
+
+        // ===== LOAD FOOTER =====
+        fetch('footer.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('footer-placeholder').innerHTML = data;
+            });
+
+        // ===== FIREBASE CONFIG =====
+        const firebaseConfig = {
+            apiKey: "AIzaSyAHmBCyGlSo1puz1LZ7k-4twg_XAcOqyRA",
+            authDomain: "svgms-backend.firebaseapp.com",
+            projectId: "svgms-backend",
+            storageBucket: "svgms-backend.firebasestorage.app",
+            messagingSenderId: "1065359559935",
+            appId: "1:1065359559935:web:977cea73a68e05813750ca"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // ===== STATE =====
+        let allMessages = [];
+        let filteredMessages = [];
+        let currentPage = 1;
+        const perPage = 10;
+        let activeFilters = { year: 'all', month: 'all', category: 'all', search: '' };
+
+        // ===== LOAD MESSAGES =====
+        async function loadMessages() {
+            const list = document.getElementById('messagesList');
+            list.innerHTML = '<div class="empty-state"><span class="icon">📭</span><p>Loading messages...</p></div>';
+
+            try {
+                const snapshot = await db.collection('ticker')
+                    .orderBy('createdAt', 'desc')
+                    .get();
+
+                allMessages = [];
+                const years = new Set();
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const msg = { id: doc.id, ...data };
+                    allMessages.push(msg);
+                    if (data.createdAt) {
+                        const year = new Date(data.createdAt).getFullYear();
+                        years.add(year);
+                    }
+                });
+
+                // Populate year filter
+                const yearSelect = document.getElementById('yearFilter');
+                yearSelect.innerHTML = '<option value="all">All Years</option>';
+                const sortedYears = Array.from(years).sort((a, b) => b - a);
+                sortedYears.forEach(year => {
+                    const option = document.createElement('option');
+                    option.value = year;
+                    option.textContent = year;
+                    yearSelect.appendChild(option);
+                });
+
+                document.getElementById('messageCount').textContent = `${allMessages.length} messages`;
+                applyFilters();
+
+            } catch (error) {
+                console.error('Error loading messages:', error);
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <span class="icon">❌</span>
+                        <p>Error loading messages. Please refresh.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // ===== APPLY FILTERS =====
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            const year = document.getElementById('yearFilter').value;
+            const month = document.getElementById('monthFilter').value;
+            const category = document.getElementById('categoryFilter').value;
+
+            activeFilters = { year, month, category, search: searchTerm };
+
+            filteredMessages = allMessages.filter(msg => {
+                if (searchTerm && !(msg.message || '').toLowerCase().includes(searchTerm)) return false;
+                if (year !== 'all') {
+                    const msgYear = msg.createdAt ? new Date(msg.createdAt).getFullYear() : null;
+                    if (msgYear !== parseInt(year)) return false;
+                }
+                if (month !== 'all') {
+                    const msgMonth = msg.createdAt ? new Date(msg.createdAt).getMonth() + 1 : null;
+                    if (msgMonth !== parseInt(month)) return false;
+                }
+                if (category !== 'all') {
+                    const msgCategory = (msg.category || 'general').toLowerCase();
+                    if (msgCategory !== category.toLowerCase()) return false;
+                }
+                return true;
+            });
+
+            currentPage = 1;
+            renderActiveFilters();
+            renderMessages();
+        }
+
+        // ===== RENDER ACTIVE FILTERS =====
+        function renderActiveFilters() {
+            const container = document.getElementById('activeFilters');
+            const filters = [];
+
+            if (activeFilters.search) filters.push({ label: `"${activeFilters.search}"`, key: 'search' });
+            if (activeFilters.year !== 'all') filters.push({ label: `Year: ${activeFilters.year}`, key: 'year' });
+            if (activeFilters.month !== 'all') {
+                const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                filters.push({ label: months[parseInt(activeFilters.month) - 1], key: 'month' });
+            }
+            if (activeFilters.category !== 'all') {
+                const categoryLabels = { notice: 'Notice', event: 'Event', exam: 'Exam', general: 'General' };
+                filters.push({ label: categoryLabels[activeFilters.category] || activeFilters.category, key: 'category' });
+            }
+
+            if (filters.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            container.innerHTML = filters.map(f => `
+                <span class="filter-tag">
+                    ${f.label}
+                    <span class="remove" onclick="removeFilter('${f.key}')">×</span>
+                </span>
+            `).join('');
+        }
+
+        // ===== REMOVE FILTER =====
+        function removeFilter(key) {
+            if (key === 'search') document.getElementById('searchInput').value = '';
+            else if (key === 'year') document.getElementById('yearFilter').value = 'all';
+            else if (key === 'month') document.getElementById('monthFilter').value = 'all';
+            else if (key === 'category') document.getElementById('categoryFilter').value = 'all';
+            applyFilters();
+        }
+
+        // ===== CLEAR FILTERS =====
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('yearFilter').value = 'all';
+            document.getElementById('monthFilter').value = 'all';
+            document.getElementById('categoryFilter').value = 'all';
+            applyFilters();
+        }
+
+        // ===== RENDER MESSAGES =====
+        function renderMessages() {
+            const list = document.getElementById('messagesList');
+            const total = filteredMessages.length;
+
+            if (total === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <span class="icon">📭</span>
+                        <p>No messages found.</p>
+                    </div>
+                `;
+                document.getElementById('pagination').innerHTML = '';
+                return;
+            }
+
+            const start = (currentPage - 1) * perPage;
+            const end = Math.min(start + perPage, total);
+            const pageMessages = filteredMessages.slice(start, end);
+
+            list.innerHTML = '';
+            pageMessages.forEach(msg => {
+                const date = msg.createdAt ? new Date(msg.createdAt) : new Date();
+                const formattedDate = date.toLocaleDateString('en-IN', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                });
+                const formattedTime = date.toLocaleTimeString('en-IN', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                const source = msg.source || 'admin';
+                const sourceLabel = source === 'telegram' ? 'Telegram' : 'Admin';
+                const sourceClass = source === 'telegram' ? 'telegram' : 'admin';
+
+                const category = (msg.category || 'general').charAt(0).toUpperCase() + (msg.category || 'general').slice(1);
+
+                const pdfHtml = msg.pdfUrl ?
+                    `<a href="${msg.pdfUrl}" target="_blank" class="pdf-link">📄 PDF</a>` : '';
+
+                const item = document.createElement('div');
+                item.className = 'message-item';
+                item.innerHTML = `
+                    <div class="msg-header">
+                        <div class="msg-date">${formattedDate}  •  ${formattedTime}</div>
+                        <div class="msg-badges">
+                            <span class="badge badge-source ${sourceClass}">${sourceLabel}</span>
+                            <span class="badge badge-category">${category}</span>
+                            ${msg.pdfUrl ? '<span class="badge badge-pdf">PDF</span>' : ''}
+                        </div>
+                    </div>
+                    <div class="msg-text">${msg.message}</div>
+                    <div class="msg-footer">
+                        <span class="msg-author">${msg.createdBy || 'Anonymous'}</span>
+                        <div class="msg-actions">
+                            ${pdfHtml}
+                        </div>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+
+            renderPagination(total);
+        }
+
+        // ===== RENDER PAGINATION =====
+        function renderPagination(total) {
+            const container = document.getElementById('pagination');
+            const totalPages = Math.ceil(total / perPage);
+
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+            html += `<button onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>←</button>`;
+
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, currentPage + 2);
+
+            if (startPage > 1) html += `<button onclick="goToPage(1)">1</button>${startPage > 2 ? '…' : ''}`;
+
+            for (let i = startPage; i <= endPage; i++) {
+                html += `<button onclick="goToPage(${i})" class="${i === currentPage ? 'active' : ''}">${i}</button>`;
+            }
+
+            if (endPage < totalPages) html += `${endPage < totalPages - 1 ? '…' : ''}<button onclick="goToPage(${totalPages})">${totalPages}</button>`;
+
+            html += `<button onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>→</button>`;
+
+            container.innerHTML = html;
+        }
+
+        // ===== GO TO PAGE =====
+        function goToPage(page) {
+            const total = filteredMessages.length;
+            const totalPages = Math.ceil(total / perPage);
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            renderMessages();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ===== EVENT LISTENERS =====
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMessages();
+
+            document.getElementById('searchInput').addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') applyFilters();
+            });
+        });
+
+        // ===== TOGGLE MENU =====
+        function toggleMenu(event, element) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const parent = element.closest('.nav-item');
+            const menu = parent.querySelector('.dropdown-menu');
+
+            if (!menu) return;
+
+            document.querySelectorAll('.nav-item').forEach(nav => {
+                if (nav !== parent) {
+                    nav.classList.remove('active');
+                    const m = nav.querySelector('.dropdown-menu');
+                    if (m) {
+                        m.style.display = 'none';
+                    }
+                }
+            });
+
+            if (parent.classList.contains('active')) {
+                parent.classList.remove('active');
+                menu.style.display = 'none';
+            } else {
+                parent.classList.add('active');
+                menu.style.display = 'block';
+            }
+        }
+
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.nav-item')) {
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                    const menu = item.querySelector('.dropdown-menu');
+                    if (menu) {
+                        menu.style.display = 'none';
+                    }
+                });
+            }
+        });
+
+        function showPage(pageName) {
+            window.location.href = `index.html#${pageName}`;
+        }
+
+        // ===== MAKE FUNCTIONS GLOBAL =====
+        window.goToPage = goToPage;
+        window.applyFilters = applyFilters;
+        window.clearFilters = clearFilters;
+        window.removeFilter = removeFilter;
+        window.toggleMenu = toggleMenu;
+        window.showPage = showPage;
+    </script>
+
+</body>
+</html>

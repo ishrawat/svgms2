@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Library - SVGMS</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="imgs/logo1.png" type="image/png" />
+
+    <style>
+        /* ===== LIBRARY PAGE STYLES ===== */
+        .library-wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 3rem;
+        }
+
+        .page-title {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid var(--accent);
+        }
+
+        .page-title h1 {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.3rem;
+        }
+
+        .page-title p {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        /* ===== TABS ===== */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--bg-light);
+            padding-bottom: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 0.6rem 1.5rem;
+            border: none;
+            background: var(--bg-light);
+            color: var(--text-muted);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .tab-btn:hover {
+            background: var(--accent);
+            color: var(--primary);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== CLASS SELECTOR (For NCERT Tab) ===== */
+        .class-selector {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            border-top: 4px solid var(--accent);
+        }
+
+        .class-selector label {
+            display: block;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .class-selector select {
+            width: 100%;
+            max-width: 300px;
+            padding: 0.7rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: var(--white);
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-dark);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0l6 8 6-8z' fill='%23666'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+        }
+
+        .class-selector select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+
+        /* ===== BOOKS GRID ===== */
+        .books-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.8rem;
+        }
+
+        .book-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--white);
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            border: 1px solid #f0f0f0;
+            transition: var(--transition);
+        }
+
+        .book-item:hover {
+            border-color: var(--accent);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .book-item .book-info {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .book-item .book-icon {
+            font-size: 1.4rem;
+        }
+
+        .book-item .book-name {
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        .book-item .btn-pdf {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.3rem 1rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .book-item .btn-pdf:hover {
+            background: var(--primary-light);
+        }
+
+        /* ===== RESOURCE GRID ===== */
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .resource-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--accent);
+            transition: var(--transition);
+        }
+
+        .resource-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .resource-card .resource-icon {
+            font-size: 2rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .resource-card .resource-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.2rem;
+        }
+
+        .resource-card .resource-category {
+            font-size: 0.7rem;
+            color: var(--accent);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.3rem;
+        }
+
+        .resource-card .resource-description {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 0.8rem;
+            line-height: 1.5;
+        }
+
+        .resource-card .resource-btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 0.4rem 1.2rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .resource-card .resource-btn:hover {
+            background: var(--primary-light);
+        }
+
+        .resource-card .resource-platforms {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .resource-card .resource-platforms a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .resource-card .resource-platforms a:hover {
+            text-decoration: underline;
+        }
+
+        .no-resources {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+            grid-column: 1 / -1;
+        }
+
+        .no-resources .icon {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .category-heading {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin: 1.5rem 0 0.8rem;
+            padding-bottom: 0.3rem;
+            border-bottom: 2px solid var(--bg-light);
+            grid-column: 1 / -1;
+        }
+
+        /* ===== LOADING ===== */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .library-wrapper {
+                padding: 1rem 0.8rem 2rem;
+            }
+            .page-title h1 {
+                font-size: 1.5rem;
+            }
+            .book-item {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                padding: 0.7rem 1rem;
+            }
+            .book-item .book-name {
+                font-size: 0.85rem;
+            }
+            .book-item .btn-pdf {
+                font-size: 0.7rem;
+                padding: 0.2rem 0.8rem;
+            }
+            .class-selector select {
+                max-width: 100%;
+            }
+            .resource-grid {
+                grid-template-columns: 1fr;
+            }
+            .tab-btn {
+                font-size: 0.8rem;
+                padding: 0.4rem 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .book-item .book-icon {
+                font-size: 1.1rem;
+            }
+            .book-item .book-name {
+                font-size: 0.78rem;
+            }
+            .book-item .btn-pdf {
+                font-size: 0.65rem;
+                padding: 0.15rem 0.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== HEADER + RIBBON ===== -->
+    <div id="header-placeholder"></div>
+
+    <!-- ===== NAVIGATION ===== -->
+    <div id="nav-placeholder"></div>
+
+    <!-- ===== LIBRARY CONTENT ===== -->
+    <div class="library-wrapper">
+
+        <div class="page-title">
+            <h1>📚 SVGMS Global Learning Hub</h1>
+            <p>NCERT textbooks, world libraries, and free skills for every student</p>
+        </div>
+
+        <!-- ===== TABS ===== -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="ncert">📖 NCERT Books</button>
+            <button class="tab-btn" data-tab="world">🌍 World Libraries</button>
+            <button class="tab-btn" data-tab="skills">🎓 Free Skills</button>
+        </div>
+
+        <!-- ===== TAB 1: NCERT BOOKS ===== -->
+        <div id="tab-ncert" class="tab-content active">
+
+            <div class="class-selector">
+                <label for="classSelect">Select your class:</label>
+                <select id="classSelect">
+                    <option value="8">Class 8</option>
+                    <option value="9">Class 9</option>
+                    <option value="10" selected>Class 10</option>
+                    <option value="11">Class 11</option>
+                    <option value="12">Class 12</option>
+                </select>
+            </div>
+
+            <div id="booksContainer">
+                <div class="loading">Loading books...</div>
+            </div>
+
+        </div>
+
+        <!-- ===== TAB 2: WORLD LIBRARIES ===== -->
+        <div id="tab-world" class="tab-content">
+            <div id="worldContainer">
+                <div class="loading">Loading world libraries...</div>
+            </div>
+        </div>
+
+        <!-- ===== TAB 3: FREE SKILLS ===== -->
+        <div id="tab-skills" class="tab-content">
+            <div id="skillsContainer">
+                <div class="loading">Loading free skills...</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <div id="footer-placeholder"></div>
+
+    <!-- ===== FIREBASE SDK ===== -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // ===== TOGGLE MENU =====
+        function toggleMenu(event, element) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const parent = element.closest('.nav-item');
+            const menu = parent.querySelector('.dropdown-menu');
+
+            if (!menu) return;
+
+            document.querySelectorAll('.nav-item').forEach(nav => {
+                if (nav !== parent) {
+                    nav.classList.remove('active');
+                    const m = nav.querySelector('.dropdown-menu');
+                    if (m) {
+                        m.style.display = 'none';
+                    }
+                }
+            });
+
+            if (parent.classList.contains('active')) {
+                parent.classList.remove('active');
+                menu.style.display = 'none';
+            } else {
+                parent.classList.add('active');
+                menu.style.display = 'block';
+            }
+        }
+
+        // ===== CLOSE DROPDOWN =====
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.nav-item')) {
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                    const menu = item.querySelector('.dropdown-menu');
+                    if (menu) {
+                        menu.style.display = 'none';
+                    }
+                });
+            }
+        });
+
+        // ===== SHOW PAGE =====
+        function showPage(pageName) {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                const menu = item.querySelector('.dropdown-menu');
+                if (menu) {
+                    menu.style.display = 'none';
+                }
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.location.href = `index.html#${pageName}`;
+        }
+
+        // ===== LOAD HEADER =====
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-placeholder').innerHTML = data;
+            });
+
+        // ===== LOAD NAVIGATION =====
+        fetch('nav.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('nav-placeholder').innerHTML = data;
+            });
+
+        // ===== LOAD FOOTER =====
+        fetch('footer.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('footer-placeholder').innerHTML = data;
+            });
+
+        // ===== FIREBASE CONFIG =====
+        const firebaseConfig = {
+            apiKey: "AIzaSyAHmBCyGlSo1puz1LZ7k-4twg_XAcOqyRA",
+            authDomain: "svgms-backend.firebaseapp.com",
+            projectId: "svgms-backend",
+            storageBucket: "svgms-backend.firebasestorage.app",
+            messagingSenderId: "1065359559935",
+            appId: "1:1065359559935:web:977cea73a68e05813750ca"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // ===== TABS =====
+        const tabs = document.querySelectorAll('.tab-btn');
+        const tabContents = {
+            ncert: document.getElementById('tab-ncert'),
+            world: document.getElementById('tab-world'),
+            skills: document.getElementById('tab-skills')
+        };
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                tabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+
+                Object.values(tabContents).forEach(content => {
+                    content.classList.remove('active');
+                });
+
+                const tabName = this.dataset.tab;
+                tabContents[tabName].classList.add('active');
+
+                if (tabName === 'ncert') {
+                    loadNcertBooks();
+                } else if (tabName === 'world') {
+                    loadWorldLibraries();
+                } else if (tabName === 'skills') {
+                    loadFreeSkills();
+                }
+            });
+        });
+
+        // ========================================
+        // 1. NCERT BOOKS (Existing)
+        // ========================================
+
+        const libraryData = {
+            "8": [
+                { icon: "📐", name: "Mathematics", url: "https://drive.google.com/file/d/1_4RRqoCWzF5YBYSgNITEZ54ccWpqwgjP/view" },
+                { icon: "🔬", name: "Science", url: "https://drive.google.com/open?id=1LX0x7mbgcD_oLTJ3MK2rkEvwEJLZMtst" },
+                { icon: "📖", name: "English (Honeydew)", url: "https://drive.google.com/open?id=1pT2fGiFdcM1d0hY_gWs4F9TRb2beyDoM" },
+                { icon: "📖", name: "English (It So Happened)", url: "https://drive.google.com/open?id=1UCdStiW8cJ_rcjEIStdWt29NF7LI5qHZ" },
+                { icon: "📖", name: "Hindi (Vasant)", url: "https://drive.google.com/open?id=1-7AxqfM4IKra40gXjLnAop10FxXOjzEQ" },
+                { icon: "📖", name: "Hindi (Bharat Ki Khoj)", url: "https://drive.google.com/open?id=1-7AxqfM4IKra40gXjLnAop10FxXOjzEQ" },
+                { icon: "📖", name: "Hindi (Durva)", url: "https://drive.google.com/file/d/18YGZuUXuhw99Ke9rPhCgCUpYIk5nz7oI/view" },
+                { icon: "🏛️", name: "Social Science (History)", url: "https://ncert.nic.in/textbook/pdf/hess2dd.zip" },
+                { icon: "🏛️", name: "Social Science (Geography)", url: "https://drive.google.com/open?id=1fvbmE6rtwQvDe48OUGA3musQvlk6PR2u" },
+                { icon: "🏛️", name: "Social Science (Civics)", url: "https://drive.google.com/open?id=1cvfCTChv124tMJikcwGPjAZ4wglDy3fg" }
+            ],
+            "9": [
+                { icon: "📐", name: "Mathematics", url: "https://drive.google.com/open?id=1EO59ZtEQVJd5x7JCi8iBRk-Ya1CE5Rfh" },
+                { icon: "🔬", name: "Science", url: "https://drive.google.com/open?id=1odObVgkMnnwfhsooweHohhXwSDK3d2uK" },
+                { icon: "📖", name: "English (Beehive)", url: "https://drive.google.com/open?id=1GEpEmDebr5lfP6DCu3joQVaZUZlhRUdu" },
+                { icon: "📖", name: "English (Moments)", url: "https://drive.google.com/open?id=1PsW28xlC1zxqBnOaSGyC0nDa66YINPzp" },
+                { icon: "📖", name: "Hindi (Kshitij)", url: "https://drive.google.com/open?id=1PhsKZ0M7t8Z9AjYt0ygQiHatGINCLhML" },
+                { icon: "📖", name: "Hindi (Sparsh)", url: "https://drive.google.com/open?id=14ri_BKHHKdA_UL7n5rwOkleQC2mDDElv" },
+                { icon: "🏛️", name: "Social Science (History)", url: "https://drive.google.com/open?id=1a0-DcGZTZG8iEPtry9j1O0awCbAIY0YI" },
+                { icon: "🏛️", name: "Social Science (Geography)", url: "https://drive.google.com/open?id=1odObVgkMnnwfhsooweHohhXwSDK3d2uK" },
+                { icon: "🏛️", name: "Social Science (Civics)", url: "https://drive.google.com/open?id=1-CsD_zlhKzyY9E4eUyNmfC0q3I26TSpW" }
+            ],
+            "10": [
+                { icon: "📐", name: "Mathematics", url: "https://drive.google.com/open?id=1RU74az46KhIDkrFi6Vq1dB_w7scfbDoe" },
+                { icon: "🔬", name: "Science", url: "https://drive.google.com/open?id=1xNp55m23jNX_jXb8idPNwAHkS1tI7gj-" },
+                { icon: "📖", name: "English (First Flight)", url: "https://drive.google.com/open?id=1JbO5jBrM7bCuA8o2JFQtBdlK3pZKR43G" },
+                { icon: "📖", name: "English (Footprints)", url: "https://drive.google.com/open?id=1JbO5jBrM7bCuA8o2JFQtBdlK3pZKR43G" },
+                { icon: "📖", name: "Hindi (Kshitij - Part 2)", url: "https://drive.google.com/open?id=1mjc7OGBWbWYxv9Rk3cXFXSanbD9GkMnx" },
+                { icon: "📖", name: "Hindi (Sparsh - Part 2)", url: "https://drive.google.com/open?id=1jzvjW3BcZcx7PbbITYnKciCppjBAbgtb" },
+                { icon: "🏛️", name: "Social Science (History)", url: "https://drive.google.com/open?id=1jX5wAsD7nHyP4iTByKuyuWeaGsg47q9i" },
+                { icon: "🏛️", name: "Social Science (Geography)", url: "https://ncert.nic.in/textbook/pdf/jess1dd.zip" },
+                { icon: "🏛️", name: "Social Science (Politics)", url: "https://drive.google.com/open?id=1BvTkrjDPQ--xKcfuebEwQebuJmDtu7Jd" },
+                { icon: "🏛️", name: "Social Science (economics)", url: "https://drive.google.com/open?id=1Rp-BV3qjOj5T1kQAaZs91qFYeKIRYFAH" }
+            ],
+            "11": [
+                { icon: "📐", name: "Mathematics", url: "https://drive.google.com/open?id=11NOEGmpuGa55iMGgKMsCWiCH02x2n_4h" },
+                { icon: "🔬", name: "Physics (Part 1)", url: "https://drive.google.com/open?id=14z_05vUqTFzc6hujHp4Uh6ETE2KsY6QL" },
+                { icon: "🔬", name: "Physics (Part 2)", url: "https://drive.google.com/open?id=1vImp8b_C1_rfiMbxf2VFN7mGlRz7T2Nl" },
+                { icon: "🧪", name: "Chemistry (Part 1)", url: "https://drive.google.com/open?id=1f7Vg0NniAJ10aRI2uG37CMOmPGpr52w3" },
+                { icon: "🧪", name: "Chemistry (Part 2)", url: "https://drive.google.com/open?id=18LgHhMMTfbIq0CPR74ErNmLdx9pFnQrp" },
+                { icon: "🧬", name: "Biology", url: "https://drive.google.com/open?id=1U8eAWuWjzrmE4EDBI2n20AqMwqj9dNH_" },
+                { icon: "📖", name: "English (Hornbill)", url: "https://drive.google.com/open?id=1qG51cTKfWpnyk5E7QxHfgL77X33i80CX" },
+                { icon: "📖", name: "English (Snapshot)", url: "https://drive.google.com/open?id=1hHIiqeXQ0glQ2MAlfgReXQJLq2-Mnohx" },
+                { icon: "📖", name: "Hindi (Antra)", url: "https://drive.google.com/open?id=1uhXRvab8Gb44tQCqUEy0qed724g_h8XE" },
+                { icon: "📖", name: "Hindi (Antral)", url: "https://drive.google.com/open?id=1WN17VHOF5Vc4bcxpHokdaq33EL0cwcQU" }
+            ],
+            "12": [
+                { icon: "📐", name: "Mathematics (Part 1)", url: "https://drive.google.com/file/d/1YYCF9Qohad4cl7o1bx5CAvYA7m8OwYD-/view" },
+                { icon: "📐", name: "Mathematics (Part 2)", url: "https://drive.google.com/file/d/17iGetFTGnA6LhNruYHnHcZg1sYgeGCAI/view" },
+                { icon: "🔬", name: "Physics (Part 1)", url: "https://drive.google.com/file/d/1sJK_TqatLjp1mfkEdY3QsoZrUpXa7ifx/view" },
+                { icon: "🔬", name: "Physics (Part 2)", url: "https://drive.google.com/file/d/1peL54z2uBzDCeAanNBnDdt7OqG-_tk5Z/view" },
+                { icon: "🧪", name: "Chemistry (Part 1)", url: "https://drive.google.com/file/d/1oeK4299WwVe6Vl9s7Ildi6pqN5fN-YIu/view" },
+                { icon: "🧪", name: "Chemistry (Part 2)", url: "https://drive.google.com/file/d/1BbtT_wOCF43HH6g5q2Q-73PYyWYLFgIS/view" },
+                { icon: "🧬", name: "Biology", url: "https://www.drishtiias.com/images/pdf/NCERT-Class-12-Biology.pdf" },
+                { icon: "📖", name: "English (Flamingo)", url: "https://drive.google.com/file/d/1tR1YayakWV-B2j-CN_qua1Pcv2q585Hw/view?usp=drive_open" },
+                { icon: "📖", name: "English (Vistas)", url: "https://drive.google.com/file/d/1eMGj79Nga6IT1TjKGmWTqm2RcGLOZMsy/view?usp=drive_open" },
+                { icon: "📖", name: "Hindi (Antra)", url: "https://drive.google.com/file/d/1EydrlpGACLqcws4RHHrOtgOgh3aiVV16/view" },
+                { icon: "📖", name: "Hindi (Antral)", url: "https://drive.google.com/file/d/1fxFziUZjigF_NuPn9IA2UasctgAkFMaZ/view" }
+            ]
+        };
+
+        function loadNcertBooks() {
+            const classValue = document.getElementById('classSelect').value;
+            const container = document.getElementById('booksContainer');
+            const books = libraryData[classValue];
+
+            if (!books || books.length === 0) {
+                container.innerHTML = '<div class="no-books">📭 No books available for this class.</div>';
+                return;
+            }
+
+            let html = '<div class="books-grid">';
+            books.forEach(book => {
+                html += `
+                    <div class="book-item">
+                        <div class="book-info">
+                            <span class="book-icon">${book.icon}</span>
+                            <span class="book-name">${book.name}</span>
+                        </div>
+                        <a href="${book.url}" target="_blank" class="btn-pdf">📖 Open PDF</a>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        document.getElementById('classSelect').addEventListener('change', loadNcertBooks);
+
+        // ========================================
+        // 2. WORLD LIBRARIES (Hardcoded)
+        // ========================================
+
+        const worldLibraries = [
+            // Top Universities
+            { icon: "🏛️", name: "Harvard Free Courses", category: "Top Universities", description: "Free online courses from Harvard University across all subjects", url: "https://pll.harvard.edu/catalog/free" },
+            { icon: "🏛️", name: "MIT OpenCourseWare", category: "Top Universities", description: "Free lecture notes, exams, and videos from MIT", url: "https://ocw.mit.edu/" },
+            { icon: "🏛️", name: "Stanford Online", category: "Top Universities", description: "Free courses from Stanford University", url: "https://online.stanford.edu/free-courses" },
+            { icon: "🏛️", name: "Oxford Free Courses", category: "Top Universities", description: "Free online courses from Oxford University", url: "https://www.oxfordhomestudy.com/free-online-courses-with-certificates" },
+            { icon: "🏛️", name: "Swayam", category: "Top Universities", description: "Government of India's free online learning platform", url: "https://swayam.gov.in/" },
+            { icon: "🏛️", name: "Skill India", category: "Top Universities", description: "Government of India's skill development initiative", url: "https://www.skillindiadigital.gov.in/home" },
+
+            // Online Learning
+            { icon: "📖", name: "FreeCodeCamp", category: "Online Learning", description: "Build Your Skills for Free (includes free certificate)", url: "https://www.freecodecamp.org/" },
+            { icon: "📖", name: "MOOC", category: "Online Learning", description: "Massive Open Online Course by Helsinki university", url: "https://www.mooc.fi/en/" },
+            { icon: "📖", name: "Khan Academy", category: "Online Learning", description: "Free world-class education for anyone, anywhere", url: "https://www.khanacademy.org/" },
+            { icon: "📖", name: "Coursera Free Courses", category: "Online Learning", description: "Thousands of free courses from top universities (scholarships easily provide 100% discount)", url: "https://www.coursera.org/browse/free" },
+            { icon: "📖", name: "NPTEL", category: "Online Learning", description: "Free courses by top IIT educators", url: "https://nptel.ac.in/" },
+            { icon: "📖", name: "Google Digital Garage", category: "Online Learning", description: "Free digital skills training from Google", url: "https://learndigital.withgoogle.com/digitalgarage" },
+            { icon: "📖", name: "Microsoft Learn", category: "Online Learning", description: "Free learning paths and certifications from Microsoft", url: "https://learn.microsoft.com/" },
+
+            // Digital Libraries
+            { icon: "📚", name: "UNESCO Digital Library", category: "Digital Libraries", description: "Access to the world's largest collection of books and documents", url: "https://unesdoc.unesco.org/" },
+            { icon: "📚", name: "World Digital Library", category: "Digital Libraries", description: "Cultural treasures from libraries around the world", url: "https://www.wdl.org/" },
+            { icon: "📚", name: "Project Gutenberg", category: "Digital Libraries", description: "Over 60,000 free ebooks", url: "https://www.gutenberg.org/" },
+            { icon: "📚", name: "Internet Archive", category: "Digital Libraries", description: "Free books, movies, music, and websites", url: "https://archive.org/" },
+            { icon: "📚", name: "Google Books", category: "Digital Libraries", description: "Search and preview millions of books", url: "https://books.google.com/" }
+        ];
+
+        function loadWorldLibraries() {
+            const container = document.getElementById('worldContainer');
+            
+            // Group by category
+            const categories = {};
+            worldLibraries.forEach(item => {
+                if (!categories[item.category]) {
+                    categories[item.category] = [];
+                }
+                categories[item.category].push(item);
+            });
+
+            let html = '<div class="resource-grid">';
+            for (const [category, items] of Object.entries(categories)) {
+                html += `<div class="category-heading">${category}</div>`;
+                items.forEach(item => {
+                    html += `
+                        <div class="resource-card">
+                            <div class="resource-icon">${item.icon}</div>
+                            <div class="resource-name">${item.name}</div>
+                            <div class="resource-description">${item.description}</div>
+                            <a href="${item.url}" target="_blank" class="resource-btn">Visit →</a>
+                        </div>
+                    `;
+                });
+            }
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        // ========================================
+        // 3. FREE SKILLS (Hardcoded)
+        // ========================================
+
+        
+
+
+
+       // ========================================
+// 3. FREE SKILLS (Fully from Firebase)
+// ========================================
+
+async function loadFreeSkills() {
+    const container = document.getElementById('skillsContainer');
+    container.innerHTML = '<div class="loading">Loading free skills...</div>';
+
+    try {
+        const snapshot = await db.collection('skills')
+            .orderBy('category', 'asc')
+            .get();
+
+        if (snapshot.empty) {
+            container.innerHTML = `
+                <div class="no-resources">
+                    <span class="icon">🎓</span>
+                    <p>No skills added yet. Admin can add skills from the dashboard.</p>
+                </div>
+            `;
+            return;
+        }
+
+        // Group by category
+        const categories = {};
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            if (!categories[data.category]) {
+                categories[data.category] = [];
+            }
+            categories[data.category].push(data);
+        });
+
+        let html = '<div class="resource-grid">';
+        for (const [category, items] of Object.entries(categories)) {
+            html += `<div class="category-heading">${category}</div>`;
+            items.forEach(item => {
+                let platformsHtml = '';
+                if (item.platforms && item.platforms.length > 0) {
+                    platformsHtml = '<div class="resource-platforms">📚 ';
+                    item.platforms.forEach(p => {
+                        platformsHtml += `<a href="${p.url}" target="_blank">${p.name}</a> | `;
+                    });
+                    platformsHtml = platformsHtml.slice(0, -3);
+                    platformsHtml += '</div>';
+                }
+
+                html += `
+                    <div class="resource-card">
+                        <div class="resource-icon">${item.icon || '🎓'}</div>
+                        <div class="resource-name">${item.name}</div>
+                        <div class="resource-category">${item.category}</div>
+                        <div class="resource-description">${item.description || ''}</div>
+                        ${platformsHtml}
+                    </div>
+                `;
+            });
+        }
+        html += '</div>';
+        container.innerHTML = html;
+
+    } catch (error) {
+        console.error('Error loading skills:', error);
+        container.innerHTML = `
+            <div class="no-resources">
+                <span class="icon">❌</span>
+                <p>Error loading free skills. Please refresh.</p>
+            </div>
+        `;
+    }
+}
+
+
+
+        // ========================================
+        // INITIAL LOAD
+        // ========================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('classSelect').value = '10';
+            loadNcertBooks();
+            loadWorldLibraries();
+            loadFreeSkills();
+        });
+    </script>
+
+</body>
+</html>

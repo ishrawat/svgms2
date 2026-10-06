@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration - SVGMS</title>
+    <link rel="icon" href="imgs/logo1.png" type="image/png" />
+
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+            background: white;
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { color: #1a237e; font-size: 28px; margin-bottom: 5px; }
+        .header p { color: #666; font-size: 14px; }
+        .header .badge {
+            display: inline-block;
+            background: #d4af37;
+            color: white;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+        
+        .alert {
+            padding: 14px 18px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: none;
+            font-size: 14px;
+            border-left: 4px solid;
+        }
+        .alert-success { display: block; background: #d4edda; color: #155724; border-left-color: #28a745; }
+        .alert-error { display: block; background: #f8d7da; color: #721c24; border-left-color: #dc3545; }
+        .alert-info { display: block; background: #d1ecf1; color: #0c5460; border-left-color: #17a2b8; }
+        
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .form-group label .required { color: #dc3545; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background: white;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #1a237e;
+            box-shadow: 0 0 0 3px rgba(26,35,126,0.1);
+        }
+        .form-group .hint { font-size: 12px; color: #999; margin-top: 4px; }
+        
+        .btn-row { display: flex; gap: 10px; margin-top: 20px; }
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+        }
+        .btn-primary { background: #1a237e; color: white; }
+        .btn-primary:hover { background: #0d1457; transform: translateY(-2px); box-shadow: 0 5px 20px rgba(26,35,126,0.3); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-secondary:hover { background: #5a6268; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-success:hover { background: #218838; }
+        
+        #successMessage {
+            display: none;
+            text-align: center;
+            padding: 30px 20px;
+        }
+        #successMessage .icon { font-size: 64px; display: block; margin-bottom: 15px; }
+        #successMessage h2 { color: #28a745; font-size: 24px; margin-bottom: 8px; }
+        #successMessage p { color: #666; font-size: 15px; margin-bottom: 20px; }
+        .back-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: #1a237e;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .back-link:hover { text-decoration: underline; }
+        
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            .form-row { grid-template-columns: 1fr; gap: 0; }
+            .btn-row { flex-direction: column; }
+            .header h1 { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>📝 Student Self Registration Form</h1>
+        <p>Fill in your to Self Register</p>
+        <span class="badge">Quick & Easy</span>
+    </div>
+
+    <!-- Alert -->
+    <div id="alert" class="alert"></div>
+
+    <!-- Form -->
+    <form id="studentForm" novalidate>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Full Name <span class="required">*</span></label>
+                <input type="text" id="studentName" placeholder="e.g., Rahul Kumar Sharma" required autofocus>
+            </div>
+            <div class="form-group">
+                <label>Date of Birth <span class="required">*</span></label>
+                <input type="date" id="studentDob" required>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Gender <span class="required">*</span></label>
+                <select id="studentGender" required>
+                    <option value="">Select</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Aadhaar Number <span class="required">*</span></label>
+                <input type="text" id="studentAadhaar" placeholder="1234-5678-9012" maxlength="14" required>
+                <div class="hint">Format: XXXX-XXXX-XXXX (12 digits)</div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Class <span class="required">*</span></label>
+                <select id="studentClass" required>
+                    <option value="">Select Class</option>
+                    <option value="8-A">6-A</option>
+                    <option value="8-B">6-B</option>
+                    <option value="9-A">7-A</option>
+                    <option value="9-B">7-B</option>
+                    <option value="8-A">8-A</option>
+                    <option value="8-B">8-B</option>
+                    <option value="9-A">9-A</option>
+                    <option value="9-B">9-B</option>
+                    <option value="10-A">10-A</option>
+                    <option value="10-B">10-B</option>
+                    <option value="11-A">11-A</option>
+                    <option value="11-B">11-B</option>
+                    <option value="12-A">12-A</option>
+                    <option value="12-B">12-B</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Roll Number <span class="required">*</span></label>
+                <input type="number" id="studentRoll" placeholder="e.g., 15" min="1" max="50" required>
+            </div>
+        </div>
+
+        <!-- NEW: Academic Session Year dropdown -->
+        <div class="form-row">
+            <div class="form-group">
+                <label>Academic Session Year <span class="required">*</span></label>
+                <select id="academicYear" required>
+                    <option value="">Select Year</option>
+                    <!-- years will be injected by JS -->
+                </select>
+                <div class="hint">Select the current academic session</div>
+            </div>
+            <div class="form-group">
+                <label>Father's Name <span class="required">*</span></label>
+                <input type="text" id="studentFather" placeholder="e.g., Rajesh Kumar" required>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Mother's Name</label>
+                <input type="text" id="studentMother" placeholder="e.g., Sunita Devi">
+            </div>
+            <div class="form-group">
+                <label>Parent's Phone <span class="required">*</span></label>
+                <input type="tel" id="studentPhone" placeholder="9876543210" pattern="[0-9]{10}" required>
+                <div class="hint">10-digit mobile number</div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Parent's WhatsApp <span class="required">*</span></label>
+                <input type="tel" id="studentWhatsapp" placeholder="9876543210" pattern="[0-9]{10}" required>
+                <div class="hint">10-digit WhatsApp number</div>
+            </div>
+            <div class="form-group">
+                <label>Parent's Email <span class="required">*</span></label>
+                <input type="email" id="studentEmail" placeholder="parent@example.com" required>
+                <div class="hint">Used for official communication</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Address</label>
+            <input type="text" id="studentAddress" placeholder="e.g., 123 Street, Bhim, Rajasthan">
+        </div>
+
+        <div class="btn-row">
+            <button type="submit" class="btn btn-primary" id="submitBtn">
+                💾 Register
+            </button>
+            <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                🔄 Reset
+            </button>
+        </div>
+    </form>
+
+    <!-- Success -->
+    <div id="successMessage">
+        <span class="icon">✅</span>
+        <h2>Registration Successful!</h2>
+        <p>Your data has been submitted. Admin will review and approve your account.</p>
+        <button class="btn btn-success" onclick="resetForm()">
+            📝 Register Another Student
+        </button>
+        <br>
+        <a href="index.html" class="back-link">← Back to Home</a>
+    </div>
+
+</div>
+
+<script>
+    // ============================================================
+    // FIREBASE CONFIG
+    // ============================================================
+    const firebaseConfig = {
+        apiKey: "AIzaSyAHmBCyGlSo1puz1LZ7k-4twg_XAcOqyRA",
+        authDomain: "svgms-backend.firebaseapp.com",
+        projectId: "svgms-backend",
+        storageBucket: "svgms-backend.firebasestorage.app",
+        messagingSenderId: "1065359559935",
+        appId: "1:1065359559935:web:977cea73a68e05813750ca"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // ============================================================
+    // GOOGLE SHEETS WEB APP URL (REPLACE WITH YOUR URL!)
+    // ============================================================
+    const SHEETS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzxezU2JCDwzzbqaTBJipNLFWiNcwptljQn-SM1jPLi7HEb_EZJKTqNcmpTcZ0u_4SSOQ/exec';
+
+    // ============================================================
+    // DOM REFERENCES
+    // ============================================================
+    const studentForm = document.getElementById('studentForm');
+    const alertEl = document.getElementById('alert');
+    const successMessage = document.getElementById('successMessage');
+    const submitBtn = document.getElementById('submitBtn');
+
+    const studentName = document.getElementById('studentName');
+    const studentDob = document.getElementById('studentDob');
+    const studentGender = document.getElementById('studentGender');
+    const studentAadhaar = document.getElementById('studentAadhaar');
+    const studentClass = document.getElementById('studentClass');
+    const studentRoll = document.getElementById('studentRoll');
+    const studentFather = document.getElementById('studentFather');
+    const studentMother = document.getElementById('studentMother');
+    const studentPhone = document.getElementById('studentPhone');
+    const studentWhatsapp = document.getElementById('studentWhatsapp');
+    const studentEmail = document.getElementById('studentEmail');
+    const studentAddress = document.getElementById('studentAddress');
+    const academicYear = document.getElementById('academicYear');
+
+    // ============================================================
+    // POPULATE ACADEMIC SESSION DROPDOWN (last 10 years + current + next 2)
+    // ============================================================
+    function populateAcademicYears() {
+        const currentYear = new Date().getFullYear();
+        const startYear = currentYear - 10;
+        const endYear = currentYear + 2;
+        academicYear.innerHTML = '<option value="">Select Year</option>';
+        for (let year = endYear; year >= startYear; year--) {
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = `${year} - ${year + 1}`;
+            // pre-select current year
+            if (year === currentYear) {
+                option.selected = true;
+            }
+            academicYear.appendChild(option);
+        }
+    }
+    populateAcademicYears();
+
+    // ============================================================
+    // FORM SUBMISSION
+    // ============================================================
+    studentForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        submitBtn.disabled = true;
+        submitBtn.textContent = '⏳ Saving...';
+        hideAlert();
+
+        // Collect data
+        const studentData = {
+            name: studentName.value.trim(),
+            dob: studentDob.value,
+            gender: studentGender.value,
+            aadhaar: studentAadhaar.value.trim(),
+            class: studentClass.value,
+            rollNo: parseInt(studentRoll.value),
+            fatherName: studentFather.value.trim(),
+            motherName: studentMother.value.trim(),
+            phone: studentPhone.value.trim(),
+            whatsapp: studentWhatsapp.value.trim(),
+            email: studentEmail.value.trim(),
+            address: studentAddress.value.trim(),
+            academicSession: academicYear.value,   // NEW field
+            timestamp: new Date().toISOString(),
+            status: 'pending'
+        };
+
+        // Validate (added academicSession check)
+        if (!studentData.name || !studentData.dob || !studentData.aadhaar ||
+            !studentData.fatherName || !studentData.class || !studentData.rollNo || 
+            !studentData.phone || !studentData.whatsapp || !studentData.email ||
+            !studentData.academicSession) {
+            showAlert('❌ Please fill in all required fields.', 'error');
+            submitBtn.disabled = false;
+            submitBtn.textContent = '💾 Register';
+            return;
+        }
+
+        try {
+            // 1. Save to Firebase
+            const docRef = await db.collection('students').add({
+                ...studentData,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            console.log('✅ Saved to Firebase with ID:', docRef.id);
+
+            // 2. Save to Google Sheets
+            await saveToGoogleSheets(studentData);
+
+            // 3. Success
+            studentForm.style.display = 'none';
+            successMessage.style.display = 'block';
+            showAlert('✅ Registered successfully!', 'success');
+
+        } catch (error) {
+            console.error('❌ Error:', error);
+            showAlert('❌ Error: ' + error.message, 'error');
+            submitBtn.disabled = false;
+            submitBtn.textContent = '💾 Register';
+        }
+    });
+
+    // ============================================================
+    // SAVE TO GOOGLE SHEETS
+    // ============================================================
+    async function saveToGoogleSheets(data) {
+        try {
+            await fetch(SHEETS_WEB_APP_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            console.log('✅ Data sent to Google Sheets');
+        } catch (error) {
+            console.error('❌ Google Sheets error:', error);
+        }
+    }
+
+    // ============================================================
+    // HELPERS
+    // ============================================================
+    function showAlert(message, type) {
+        alertEl.className = `alert alert-${type}`;
+        alertEl.textContent = message;
+        alertEl.style.display = 'block';
+        setTimeout(() => { alertEl.style.display = 'none'; }, 6000);
+    }
+
+    function hideAlert() {
+        alertEl.style.display = 'none';
+    }
+
+    function resetForm() {
+        studentForm.reset();
+        studentForm.style.display = 'block';
+        successMessage.style.display = 'none';
+        hideAlert();
+        submitBtn.disabled = false;
+        submitBtn.textContent = '💾 Register';
+        // re-populate academic year (reset selected to current)
+        populateAcademicYears();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ============================================================
+    // FORMATTING
+    // ============================================================
+    // Aadhaar: Auto-add dashes
+    studentAadhaar.addEventListener('input', function() {
+        let value = this.value.replace(/\D/g, '');
+        if (value.length > 12) value = value.slice(0, 12);
+        let formatted = '';
+        for (let i = 0; i < value.length; i++) {
+            if (i > 0 && i % 4 === 0) formatted += '-';
+            formatted += value[i];
+        }
+        this.value = formatted;
+    });
+
+    // Phone: Only numbers
+    studentPhone.addEventListener('input', function() {
+        this.value = this.value.replace(/\D/g, '').slice(0, 10);
+    });
+
+    // WhatsApp: Only numbers
+    studentWhatsapp.addEventListener('input', function() {
+        this.value = this.value.replace(/\D/g, '').slice(0, 10);
+    });
+
+    console.log('✅ Simple Registration Page Loaded (with Aadhaar & Academic Session)');
+    console.log('📌 Google Sheets URL:', SHEETS_WEB_APP_URL);
+</script>
+
+</body>
+</html>

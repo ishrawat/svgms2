@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Methodology - SVGMS</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="imgs/logo1.png" type="image/png" />
+
+    <style>
+        .page-wrapper {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 3rem;
+        }
+
+        .page-title {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid var(--accent);
+        }
+
+        .page-title h1 {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.3rem;
+            font-weight: 700;
+        }
+
+        .page-title p {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .content-section {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--accent);
+        }
+
+        .content-section h2 {
+            color: var(--primary);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            border-bottom: 1px solid var(--bg-light);
+            padding-bottom: 0.5rem;
+        }
+
+        .content-section p {
+            color: var(--text-dark);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .content-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0.5rem 0;
+        }
+
+        .content-section ul li {
+            padding: 0.6rem 0;
+            padding-left: 1.8rem;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23d4af37" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>') left center no-repeat;
+            background-size: 1.2rem;
+            border-bottom: 1px solid #f5f5f5;
+            color: var(--text-dark);
+            font-size: 0.98rem;
+        }
+
+        .content-section ul li:last-child {
+            border-bottom: none;
+        }
+
+        @media (max-width: 768px) {
+            .page-wrapper {
+                padding: 1rem 0.8rem 2rem;
+            }
+            .page-title h1 {
+                font-size: 1.5rem;
+            }
+            .content-section {
+                padding: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="header-placeholder"></div>
+    <div id="nav-placeholder"></div>
+
+    <div class="page-wrapper">
+
+        <div class="page-title">
+            <h1>Teaching Methodology</h1>
+            <p>Pedagogical approach, teaching strategies, and learning methodologies</p>
+        </div>
+
+        <div class="content-section">
+            <h2>Teaching Philosophy</h2>
+            <p>At Swami Vivekanand Govt. Model School, Bhim, we follow a learner-centric approach that integrates modern pedagogical practices with traditional values. Our teaching methodology is aligned with the National Education Policy (NEP) 2020 and CBSE guidelines.</p>
+            <p>We aim to create a nurturing and inclusive learning environment that fosters curiosity, critical thinking, and holistic development.</p>
+        </div>
+
+        <div class="content-section">
+            <h2>Key Teaching Methods</h2>
+            <ul>
+                <li><strong>Experiential Learning:</strong> Hands-on activities, laboratory experiments, and real-world applications to enhance conceptual understanding</li>
+                <li><strong>Project-Based Learning:</strong> Collaborative projects that develop research, analytical, and problem-solving skills</li>
+                <li><strong>Technology Integration:</strong> Smart classrooms, digital labs, and e-learning resources as per CBSE ICT guidelines</li>
+                <li><strong>Differentiated Instruction:</strong> Catering to diverse learning needs and abilities through adaptive teaching strategies</li>
+                <li><strong>Continuous Assessment:</strong> Regular formative assessments to monitor and support student progress</li>
+            </ul>
+        </div>
+
+        <div class="content-section">
+            <h2>Pedagogical Practices</h2>
+            <ul>
+                <li><strong>Interactive Lectures:</strong> Engaging classroom discussions and question-answer sessions to promote active participation</li>
+                <li><strong>Collaborative Learning:</strong> Group activities and peer-to-peer learning to develop teamwork and interpersonal skills</li>
+                <li><strong>Peer Mentoring:</strong> Students learn from each other through structured peer mentoring programs</li>
+                <li><strong>Multimedia Integration:</strong> Use of audio-visual aids, diagrams, and digital content for better conceptual clarity</li>
+                <li><strong>Educational Tours:</strong> Field trips and excursions to provide practical exposure and experiential learning opportunities</li>
+            </ul>
+        </div>
+
+        <div class="content-section">
+            <h2>Skill Development Focus</h2>
+            <ul>
+                <li><strong>Communication Skills:</strong> Debates, presentations, public speaking, and creative writing</li>
+                <li><strong>Critical Thinking:</strong> Analytical reasoning, problem-solving, and decision-making</li>
+                <li><strong>Creativity and Innovation:</strong> Art, music, drama, and creative projects</li>
+                <li><strong>Collaboration and Teamwork:</strong> Group projects and team-based activities</li>
+                <li><strong>Digital Literacy:</strong> ICT skills, computer proficiency, and responsible use of technology</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        fetch('header.html').then(r => r.text()).then(data => document.getElementById('header-placeholder').innerHTML = data);
+        fetch('nav.html').then(r => r.text()).then(data => document.getElementById('nav-placeholder').innerHTML = data);
+        fetch('footer.html').then(r => r.text()).then(data => document.getElementById('footer-placeholder').innerHTML = data);
+
+        function toggleMenu(event, element) {
+            event.preventDefault();
+            event.stopPropagation();
+            const parent = element.closest('.nav-item');
+            const menu = parent.querySelector('.dropdown-menu');
+            if (!menu) return;
+            document.querySelectorAll('.nav-item').forEach(nav => {
+                if (nav !== parent) {
+                    nav.classList.remove('active');
+                    const m = nav.querySelector('.dropdown-menu');
+                    if (m) m.style.display = 'none';
+                }
+            });
+            if (parent.classList.contains('active')) {
+                parent.classList.remove('active');
+                menu.style.display = 'none';
+            } else {
+                parent.classList.add('active');
+                menu.style.display = 'block';
+            }
+        }
+
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.nav-item')) {
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                    const menu = item.querySelector('.dropdown-menu');
+                    if (menu) menu.style.display = 'none';
+                });
+            }
+        });
+
+        function showPage(pageName) {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                const menu = item.querySelector('.dropdown-menu');
+                if (menu) menu.style.display = 'none';
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.location.href = `index.html#${pageName}`;
+        }
+    </script>
+
+</body>
+</html>
